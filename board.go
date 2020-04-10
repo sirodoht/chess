@@ -2,24 +2,25 @@ package main
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/olekukonko/tablewriter"
 )
 
 // Board is our chess board state
-type Board [8][9]string
+type Board [8][8]string
 
 // Init adds all pieces in their initial chess positions
 func (b *Board) Init() {
 	*b = Board{
-		{"1", "● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},
-		{"2", "● P", "● P", "● P", "● P", "● P", "● P", "● P", "● P"},
-		{"3", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
-		{"4", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
-		{"5", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
-		{"6", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
-		{"7", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P"},
-		{"8", "○ R", "○ K", "○ B", "○ Q", "○ G", "○ B", "○ K", "○ R"},
+		{"● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},
+		{"● P", "● P", "● P", "● P", "● P", "● P", "● P", "● P"},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P"},
+		{"○ R", "○ K", "○ B", "○ Q", "○ G", "○ B", "○ K", "○ R"},
 	}
 }
 
@@ -55,7 +56,16 @@ func (b *Board) Render() {
 			if len(data) >= i {
 				data = append(data, []string{})
 			}
-			dataCell := string(b[i][j])
+
+			dataCell := ""
+
+			// add row numbers on the left
+			if j == 0 {
+				dataCell = strconv.Itoa(i + 1)
+			} else {
+				dataCell = string(b[i][j-1])
+			}
+
 			data[i] = append(data[i], dataCell)
 		}
 	}
