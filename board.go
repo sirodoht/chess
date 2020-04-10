@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"os"
-	"strings"
 
 	"github.com/olekukonko/tablewriter"
 )
@@ -23,6 +21,21 @@ func (b *Board) Init() {
 		{"7", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P"},
 		{"8", "○ R", "○ K", "○ B", "○ Q", "○ G", "○ B", "○ K", "○ R"},
 	}
+}
+
+// Execute applies a move to the board
+// Essentially, it is the move of a piece on the board.
+func (b *Board) Execute(m Move) (string, string) {
+	oldRow, oldCol := m.getIndexes("before")
+	piece := b[oldRow][oldCol]
+	pieceName := getPieceName(piece)
+
+	// command piece
+	newRow, newCol := m.getIndexes("after")
+	b[newRow][newCol] = piece
+	b[oldRow][oldCol] = "   "
+
+	return pieceName, m.AsString("after")
 }
 
 // Render prints the board in stdout
@@ -50,21 +63,26 @@ func (b *Board) Render() {
 	table.Render()
 }
 
-// Move changes the location of one piece, to a new chess board cell
-func (b *Board) Move(command string) {
-	// parse command
-	words := strings.Fields(command)
-	before := words[0]
-	after := words[1]
+// getPieceName returns the name of the given piece in notation
+// e.g. pieceNotation could be "○ P" and the return string would be "white Pawn"
+func getPieceName(pieceNotation string) string {
+	// parse piece notation
+	circle := []rune(pieceNotation)[0]
+	piece := []rune(pieceNotation)[2]
 
-	// cache piece from current location
-	oldRow, oldCol := getIndexesFromNotation(before)
-	piece := b[oldRow][oldCol]
-	pieceName := getPieceName(piece)
-	fmt.Printf("\nMOVE: %s commandd to %s\n", pieceName, after)
+	colorNames := map[rune]string{
+		'○': "white ○",
+		'●': "black ●",
+	}
 
-	// command piece
-	newRow, newCol := getIndexesFromNotation(after)
-	b[newRow][newCol] = piece
-	b[oldRow][oldCol] = "   "
+	pieceNames := map[rune]string{
+		'P': "Pawn",
+		'R': "Rook",
+		'K': "Knight",
+		'B': "Bishop",
+		'Q': "Queen",
+		'G': "King",
+	}
+
+	return colorNames[circle] + " " + pieceNames[piece]
 }
