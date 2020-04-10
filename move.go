@@ -138,36 +138,6 @@ func isMoveSyntaxValid(command string) bool {
 	return true
 }
 
-// getIndexesFromNotation, given a notation like "d7""
-// returns the board array's indexes, e.g. (4, 7)
-func getIndexesFromNotation(notation string) (int, int) {
-	// parse notation
-	letter := string([]rune(notation)[0])
-	digit := string([]rune(notation)[1])
-	digitAsInt, err := strconv.Atoi(digit)
-	if err != nil {
-		panic(err)
-	}
-
-	// row
-	row := digitAsInt - 1
-
-	// col
-	columnLetters := map[string]int{
-		"a": 1,
-		"b": 2,
-		"c": 3,
-		"d": 4,
-		"e": 5,
-		"f": 6,
-		"g": 7,
-		"h": 8,
-	}
-	col := columnLetters[letter]
-
-	return row, col
-}
-
 func isLetterValid(letter rune) bool {
 	validLetters := [...]rune{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}
 
