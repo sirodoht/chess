@@ -26,16 +26,16 @@ func (b *Board) Init() {
 // Execute applies a move to the board
 // Essentially, it is the move of a piece on the board.
 func (b *Board) Execute(m Move) (string, string) {
-	oldRow, oldCol := m.getIndexes("before")
+	oldRow, oldCol := m.getIndexes(BEFORE)
 	piece := b[oldRow][oldCol]
 	pieceName := getPieceName(piece)
 
 	// command piece
-	newRow, newCol := m.getIndexes("after")
+	newRow, newCol := m.getIndexes(AFTER)
 	b[newRow][newCol] = piece
 	b[oldRow][oldCol] = "   "
 
-	return pieceName, m.AsString("after")
+	return pieceName, m.AsString(AFTER)
 }
 
 // Render prints the board in stdout

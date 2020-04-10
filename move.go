@@ -15,6 +15,18 @@ type Move struct {
 	AfterNumber  int
 }
 
+// Part defines either the before or the after part of a move
+// e.g. if move is "d7 d6" the before is "d7" and the after is "d6"
+type Part int
+
+const (
+	// BEFORE is about the part of the move that defines where the piece comes from
+	BEFORE Part = iota
+
+	// AFTER is about the part of the move that defines where the piece goes to
+	AFTER
+)
+
 // NewMove returns a new Move struct out of a command string
 func NewMove(command string) (Move, error) {
 	// check validity
@@ -46,10 +58,10 @@ func NewMove(command string) (Move, error) {
 	return m, nil
 }
 
-func (m Move) getIndexes(when string) (int, int) {
+func (m Move) getIndexes(part Part) (int, int) {
 	// row
 	row := m.AfterNumber - 1
-	if when == "before" {
+	if part == BEFORE {
 		row = m.BeforeNumber - 1
 	}
 
@@ -65,7 +77,7 @@ func (m Move) getIndexes(when string) (int, int) {
 		'h': 8,
 	}
 	col := columnLetters[m.BeforeLetter]
-	if when == "after" {
+	if part == AFTER {
 		col = columnLetters[m.AfterLetter]
 	}
 
@@ -73,8 +85,8 @@ func (m Move) getIndexes(when string) (int, int) {
 }
 
 // AsString returns the before or after part of the command as string
-func (m Move) AsString(when string) string {
-	if when == "before" {
+func (m Move) AsString(part Part) string {
+	if part == BEFORE {
 		return string(m.BeforeLetter) + strconv.Itoa(m.BeforeNumber)
 	}
 	return string(m.AfterLetter) + strconv.Itoa(m.AfterNumber)
