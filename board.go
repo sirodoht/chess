@@ -40,19 +40,19 @@ type Location struct {
 // Execute applies a move to the board
 // Essentially, it is the move of a piece on the board.
 func (b *Board) Execute(m Move) (string, string) {
-	oldRow, oldCol := m.getIndexes(BEFORE)
+	oldRow, oldCol := m.GetIndexes(BEFORE)
 	content := b[oldRow][oldCol]
 	pieceRune := []rune(content)[2]
 	piece := GetPiece(pieceRune)
-	sq := b.getSquare(m, BEFORE)
+	sq := b.GetSquare(m, BEFORE)
 	beforeDescription := GetTeamName(m.team, VERBOSE) + " " + GetPieceName(sq.piece, VERBOSE)
 
 	// command piece
-	newRow, newCol := m.getIndexes(AFTER)
+	newRow, newCol := m.GetIndexes(AFTER)
 	b[newRow][newCol] = GetTeamName(m.team, SYMBOL) + " " + GetPieceName(piece, SYMBOL)
 	b[oldRow][oldCol] = "   "
 
-	return beforeDescription, m.AsString(AFTER)
+	return beforeDescription, m.AsNotation(AFTER)
 }
 
 // Render prints the board in stdout
@@ -89,9 +89,9 @@ func (b *Board) Render() {
 	table.Render()
 }
 
-// getSquare returns the part piece that is to be moved, either BEFORE or AFTER
-func (b Board) getSquare(m Move, part Part) Square {
-	row, col := m.getIndexes(part)
+// GetSquare returns the part piece that is to be moved, either BEFORE or AFTER
+func (b Board) GetSquare(m Move, part Part) Square {
+	row, col := m.GetIndexes(part)
 	content := b[row][col]
 
 	color := []rune(content)[0]
@@ -127,13 +127,13 @@ func (b Board) getSquare(m Move, part Part) Square {
 
 // IsMoveValid checks whether the move is valid in the current board
 func (b Board) IsMoveValid(m Move) bool {
-	beforeSquare := b.getSquare(m, BEFORE)
+	beforeSquare := b.GetSquare(m, BEFORE)
 	if beforeSquare.isEmpty {
 		return false
 	}
 
 	if beforeSquare.piece == ROOK {
-		targetSquare := b.getSquare(m, AFTER)
+		targetSquare := b.GetSquare(m, AFTER)
 		if beforeSquare.team == targetSquare.team {
 			return false
 		}

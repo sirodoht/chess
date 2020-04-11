@@ -31,7 +31,7 @@ const (
 // NewMove returns a new Move struct out of a command string
 func NewMove(team Team, command string) (Move, error) {
 	// check command validity
-	if !isCommandValid(command) {
+	if !IsCommandValid(command) {
 		return Move{}, errors.New("invalid move")
 	}
 
@@ -60,7 +60,8 @@ func NewMove(team Team, command string) (Move, error) {
 	return m, nil
 }
 
-func (m Move) getIndexes(part Part) (int, int) {
+// GetIndexes returns the board indexes, with board as a 2d array
+func (m Move) GetIndexes(part Part) (int, int) {
 	// row
 	row := m.afterNumber - 1
 	if part == BEFORE {
@@ -86,15 +87,19 @@ func (m Move) getIndexes(part Part) (int, int) {
 	return row, col
 }
 
-// AsString returns the before or after part of the command as string
-func (m Move) AsString(part Part) string {
+// AsNotation returns the before or after part of the command as chess notation
+// e.g. d7
+func (m Move) AsNotation(part Part) string {
 	if part == BEFORE {
 		return string(m.beforeLetter) + strconv.Itoa(m.beforeNumber)
 	}
 	return string(m.afterLetter) + strconv.Itoa(m.afterNumber)
 }
 
-func isCommandValid(command string) bool {
+// IsCommandValid returns whether a command is valid
+// A command is a chess move notation
+// e.g. "d7 d6", which means piece that is at d7, should go to d6
+func IsCommandValid(command string) bool {
 	words := strings.Fields(command)
 
 	// check that there are two words
@@ -115,32 +120,33 @@ func isCommandValid(command string) bool {
 
 	// check before word has valid letter
 	beforeLetter := []rune(before)[0]
-	if !isLetterValid(beforeLetter) {
+	if !IsLetterValid(beforeLetter) {
 		return false
 	}
 
 	// check after word has valid letter
 	afterLetter := []rune(after)[0]
-	if !isLetterValid(afterLetter) {
+	if !IsLetterValid(afterLetter) {
 		return false
 	}
 
 	// check before word has valid number
 	beforeNumber := []rune(before)[1]
-	if !isNumberValid(beforeNumber) {
+	if !IsNumberValid(beforeNumber) {
 		return false
 	}
 
 	// check after word has valid number
 	afterNumber := []rune(after)[1]
-	if !isNumberValid(afterNumber) {
+	if !IsNumberValid(afterNumber) {
 		return false
 	}
 
 	return true
 }
 
-func isLetterValid(letter rune) bool {
+// IsLetterValid returns whether inputted letter in the command is valid
+func IsLetterValid(letter rune) bool {
 	validLetters := [...]rune{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}
 
 	valid := false
@@ -153,7 +159,8 @@ func isLetterValid(letter rune) bool {
 	return valid
 }
 
-func isNumberValid(number rune) bool {
+// IsNumberValid returns whether inputted number in the command is valid
+func IsNumberValid(number rune) bool {
 	numberStr := string(number)
 	validNumbers := [...]int{1, 2, 3, 4, 5, 6, 7, 8}
 
