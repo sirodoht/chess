@@ -18,9 +18,9 @@ $ go run .
 | 7 | ○ P | ○ P | ○ P | ○ P | ○ P | ○ P | ○ P | ○ P |
 | 8 | ○ R | ○ K | ○ B | ○ Q | ○ G | ○ B | ○ K | ○ R |
 +---+-----+-----+-----+-----+-----+-----+-----+-----+
-Enter next move: d7 d6
+WHITE plays. Enter next move: d7 d5
 
-MOVE: white ○ Pawn moved to d6
+MOVE: white ○ Pawn moved to d5
 +---+-----+-----+-----+-----+-----+-----+-----+-----+
 |   |  a  |  b  |  c  |  d  |  e  |  f  |  g  |  h  |
 +---+-----+-----+-----+-----+-----+-----+-----+-----+
@@ -28,17 +28,24 @@ MOVE: white ○ Pawn moved to d6
 | 2 | ● P | ● P | ● P | ● P | ● P | ● P | ● P | ● P |
 | 3 |     |     |     |     |     |     |     |     |
 | 4 |     |     |     |     |     |     |     |     |
-| 5 |     |     |     |     |     |     |     |     |
-| 6 |     |     |     |     | ○ P |     |     |     |
+| 5 |     |     |     |     | ○ P |     |     |     |
+| 6 |     |     |     |     |     |     |     |     |
 | 7 | ○ P | ○ P | ○ P | ○ P |     | ○ P | ○ P | ○ P |
 | 8 | ○ R | ○ K | ○ B | ○ Q | ○ G | ○ B | ○ K | ○ R |
 +---+-----+-----+-----+-----+-----+-----+-----+-----+
+BLACK plays. Enter next move:
 ```
 
 ## Run
 
 ```
 $ go run main.go
+```
+
+## Test
+
+```
+$ go test
 ```
 
 ## License
