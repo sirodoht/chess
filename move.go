@@ -9,10 +9,11 @@ import (
 // Move a command to change the board state
 // e.g. "d7 -> d6", so whatever is in d7 put it in d6
 type Move struct {
-	BeforeLetter rune
-	BeforeNumber int
-	AfterLetter  rune
-	AfterNumber  int
+	team         Team
+	beforeLetter rune
+	beforeNumber int
+	afterLetter  rune
+	afterNumber  int
 }
 
 // Part defines either the before or the after part of a move
@@ -29,8 +30,8 @@ const (
 
 // NewMove returns a new Move struct out of a command string
 func NewMove(command string) (Move, error) {
-	// check validity
-	if !isMoveSyntaxValid(command) {
+	// check command validity
+	if !isCommandValid(command) {
 		return Move{}, errors.New("invalid move")
 	}
 
@@ -40,29 +41,29 @@ func NewMove(command string) (Move, error) {
 	after := words[1]
 
 	m := Move{}
-	m.BeforeLetter = []rune(before)[0]
-	m.AfterLetter = []rune(after)[0]
+	m.beforeLetter = []rune(before)[0]
+	m.afterLetter = []rune(after)[0]
 
 	beforeNumber, err := strconv.Atoi(string([]rune(before)[1]))
 	if err != nil {
 		panic(err)
 	}
-	m.BeforeNumber = beforeNumber
+	m.beforeNumber = beforeNumber
 
 	afterNumber, err := strconv.Atoi(string([]rune(after)[1]))
 	if err != nil {
 		panic(err)
 	}
-	m.AfterNumber = afterNumber
+	m.afterNumber = afterNumber
 
 	return m, nil
 }
 
 func (m Move) getIndexes(part Part) (int, int) {
 	// row
-	row := m.AfterNumber - 1
+	row := m.afterNumber - 1
 	if part == BEFORE {
-		row = m.BeforeNumber - 1
+		row = m.beforeNumber - 1
 	}
 
 	// col
@@ -76,9 +77,9 @@ func (m Move) getIndexes(part Part) (int, int) {
 		'g': 7,
 		'h': 8,
 	}
-	col := columnLetters[m.BeforeLetter]
+	col := columnLetters[m.beforeLetter]
 	if part == AFTER {
-		col = columnLetters[m.AfterLetter]
+		col = columnLetters[m.afterLetter]
 	}
 
 	return row, col
@@ -87,12 +88,12 @@ func (m Move) getIndexes(part Part) (int, int) {
 // AsString returns the before or after part of the command as string
 func (m Move) AsString(part Part) string {
 	if part == BEFORE {
-		return string(m.BeforeLetter) + strconv.Itoa(m.BeforeNumber)
+		return string(m.beforeLetter) + strconv.Itoa(m.beforeNumber)
 	}
-	return string(m.AfterLetter) + strconv.Itoa(m.AfterNumber)
+	return string(m.afterLetter) + strconv.Itoa(m.afterNumber)
 }
 
-func isMoveSyntaxValid(command string) bool {
+func isCommandValid(command string) bool {
 	words := strings.Fields(command)
 
 	// check that there are two words
