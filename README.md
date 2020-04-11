@@ -43,4 +43,4 @@ $ go run main.go
 
 ## License
 
-[MIT](LICENSE).
+[MIT](LICENSE)
