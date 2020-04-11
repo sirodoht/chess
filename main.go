@@ -12,22 +12,25 @@ func main() {
 	board := Board{}
 	board.Init()
 
+	turn := WHITE
+
 	// main game loop
 	for {
 		board.Render()
 
-		// read from terminal
+		// read from stdin
 		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("Enter next move: ")
+		turnName := GetTeamName(turn, UPPER)
+		fmt.Printf("%s plays. Enter next move: ", turnName)
 		command, err := reader.ReadString('\n')
 		if err != nil {
 			panic(err)
 		}
 		command = strings.TrimSpace(command)
 
-		move, err := NewMove(WHITE, command)
+		move, err := NewMove(turn, command)
 		if err != nil {
-			fmt.Println("Invalid move. Please try again.")
+			fmt.Println("\nInvalid move. Please try again.")
 			continue
 		}
 
@@ -38,6 +41,13 @@ func main() {
 		// check for exit
 		if command == "exit" {
 			break
+		}
+
+		// change turns
+		if turn == WHITE {
+			turn = BLACK
+		} else {
+			turn = WHITE
 		}
 	}
 }
