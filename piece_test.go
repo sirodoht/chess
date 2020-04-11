@@ -18,7 +18,7 @@ func TestGetPossibleMovesRook00(t *testing.T) {
 		row: 0,
 		col: 0,
 	}
-	possibleLocations := getPossibleMoves(location, ROOK)
+	possibleLocations := GetPossibleMoves(location, ROOK)
 	if len(possibleLocations) != 14 {
 		t.Error("wrong number of 00 Rook possible moves")
 	}
@@ -43,7 +43,7 @@ func TestGetPossibleMovesRook07(t *testing.T) {
 		row: 0,
 		col: 7,
 	}
-	possibleLocations := getPossibleMoves(location, ROOK)
+	possibleLocations := GetPossibleMoves(location, ROOK)
 	if len(possibleLocations) != 14 {
 		t.Error("wrong number of 07 Rook possible moves")
 	}
@@ -68,7 +68,7 @@ func TestGetPossibleMovesRook44(t *testing.T) {
 		row: 4,
 		col: 4,
 	}
-	possibleLocations := getPossibleMoves(location, ROOK)
+	possibleLocations := GetPossibleMoves(location, ROOK)
 	if len(possibleLocations) != 14 {
 		t.Error("possible moves for 44 Rook are not 14")
 	}
@@ -93,7 +93,7 @@ func TestGetPossibleMovesKnight01(t *testing.T) {
 		row: 0,
 		col: 1,
 	}
-	possibleLocations := getPossibleMoves(location, KNIGHT)
+	possibleLocations := GetPossibleMoves(location, KNIGHT)
 	if len(possibleLocations) != 3 {
 		t.Error("possible moves for 01 Knight are not 3")
 	}
@@ -107,7 +107,7 @@ func TestGetPossibleMovesKnight71(t *testing.T) {
 		row: 7,
 		col: 1,
 	}
-	possibleLocations := getPossibleMoves(location, KNIGHT)
+	possibleLocations := GetPossibleMoves(location, KNIGHT)
 	if len(possibleLocations) != 3 {
 		t.Error("possible moves for 71 Knight are not 3")
 	}
@@ -121,7 +121,7 @@ func TestGetPossibleMovesKnight43(t *testing.T) {
 		row: 4,
 		col: 3,
 	}
-	possibleLocations := getPossibleMoves(location, KNIGHT)
+	possibleLocations := GetPossibleMoves(location, KNIGHT)
 	if len(possibleLocations) != 8 {
 		t.Error("possible moves for 43 Knight are not 8")
 	}

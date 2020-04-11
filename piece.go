@@ -67,9 +67,9 @@ func GetPieceName(piece Piece, format Format) string {
 	}
 }
 
-// getPossibleMoves get a location in the board and a piece,
+// GetPossibleMoves get a location in the board and a piece,
 // and returns all possible location as if the board is empty
-func getPossibleMoves(origin Location, piece Piece) []Location {
+func GetPossibleMoves(origin Location, piece Piece) []Location {
 	possibleMoves := []Location{}
 	if piece == ROOK {
 		possibleMoves = GetPossibleRookMoves(origin)
