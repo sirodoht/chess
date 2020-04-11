@@ -125,6 +125,42 @@ func (b Board) getSquare(m Move, part Part) Square {
 	return square
 }
 
+// getPossibleMoves get a location in the board and a piece,
+// and returns all possible location as if the board is empty
+func getPossibleMoves(origin Location, piece Piece) []Location {
+	possibleMoves := []Location{}
+	if piece == ROOK {
+		newRow := 0
+		for newRow < 8 {
+			if newRow == origin.row {
+				// omit current location
+				newRow++
+				continue
+			}
+			possibleMoves = append(possibleMoves, Location{
+				row: newRow,
+				col: origin.col,
+			})
+			newRow++
+		}
+		newCol := 0
+		for newCol < 8 {
+			if newCol == origin.col {
+				// omit current location
+				newCol++
+				continue
+			}
+			possibleMoves = append(possibleMoves, Location{
+				row: origin.row,
+				col: newCol,
+			})
+			newCol++
+		}
+	}
+
+	return possibleMoves
+}
+
 func (b Board) isMoveValid(m Move) bool {
 	beforeSquare := b.getSquare(m, BEFORE)
 	if beforeSquare.isEmpty {
