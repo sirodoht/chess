@@ -29,7 +29,7 @@ const (
 )
 
 // NewMove returns a new Move struct out of a command string
-func NewMove(command string) (Move, error) {
+func NewMove(team Team, command string) (Move, error) {
 	// check command validity
 	if !isCommandValid(command) {
 		return Move{}, errors.New("invalid move")
@@ -41,6 +41,7 @@ func NewMove(command string) (Move, error) {
 	after := words[1]
 
 	m := Move{}
+	m.team = team
 	m.beforeLetter = []rune(before)[0]
 	m.afterLetter = []rune(after)[0]
 
