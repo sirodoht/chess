@@ -24,6 +24,19 @@ func (b *Board) Init() {
 	}
 }
 
+// Square defines the content of any square on the board
+type Square struct {
+	team    Team
+	isEmpty bool
+	piece   Piece
+}
+
+// Location is a square on the board.
+type Location struct {
+	row int
+	col int
+}
+
 // Execute applies a move to the board
 // Essentially, it is the move of a piece on the board.
 func (b *Board) Execute(m Move) (string, string) {
@@ -95,4 +108,55 @@ func getPieceName(pieceNotation string) string {
 	}
 
 	return colorNames[circle] + " " + pieceNames[piece]
+}
+
+// getSquare returns the part piece that is to be moved, either BEFORE or AFTER
+func (b Board) getSquare(m Move, part Part) Square {
+	row, col := m.getIndexes(part)
+	content := b[row][col]
+
+	color := []rune(content)[0]
+	team := WHITE
+	if color == '●' {
+		team = BLACK
+	}
+
+	pieceRune := []rune(content)[1]
+	isEmpty := false
+	if pieceRune == ' ' {
+		isEmpty = true
+	}
+	piece := PAWN
+	pieceSymbols := map[rune]Piece{
+		'P': PAWN,
+		'R': ROOK,
+		'K': KNIGHT,
+		'B': BISHOP,
+		'Q': QUEEN,
+		'G': KING,
+	}
+	piece = pieceSymbols[pieceRune]
+
+	square := Square{
+		team:    team,
+		piece:   piece,
+		isEmpty: isEmpty,
+	}
+
+	return square
+}
+
+func (b Board) isMoveValid(m Move) bool {
+	beforeSquare := b.getSquare(m, BEFORE)
+	if beforeSquare.isEmpty {
+		return false
+	}
+
+	if beforeSquare.piece == ROOK {
+		targetSquare := b.getSquare(m, AFTER)
+		if beforeSquare.team == targetSquare.team {
+			return false
+		}
+	}
+	return true
 }
