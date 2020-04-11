@@ -41,15 +41,18 @@ type Location struct {
 // Essentially, it is the move of a piece on the board.
 func (b *Board) Execute(m Move) (string, string) {
 	oldRow, oldCol := m.getIndexes(BEFORE)
-	piece := b[oldRow][oldCol]
-	pieceName := getPieceName(piece)
+	content := b[oldRow][oldCol]
+	pieceRune := []rune(content)[2]
+	piece := GetPiece(pieceRune)
+	sq := b.getSquare(m, BEFORE)
+	beforeDescription := GetTeamName(m.team) + " " + GetPieceName(sq.piece)
 
 	// command piece
 	newRow, newCol := m.getIndexes(AFTER)
-	b[newRow][newCol] = piece
+	b[newRow][newCol] = GetTeamSymbol(m.team) + " " + GetPieceAbbr(piece)
 	b[oldRow][oldCol] = "   "
 
-	return pieceName, m.AsString(AFTER)
+	return beforeDescription, m.AsString(AFTER)
 }
 
 // Render prints the board in stdout
@@ -84,30 +87,6 @@ func (b *Board) Render() {
 	}
 	table.AppendBulk(data)
 	table.Render()
-}
-
-// getPieceName returns the name of the given piece in notation
-// e.g. pieceNotation could be "○ P" and the return string would be "white Pawn"
-func getPieceName(pieceNotation string) string {
-	// parse piece notation
-	circle := []rune(pieceNotation)[0]
-	piece := []rune(pieceNotation)[2]
-
-	colorNames := map[rune]string{
-		'○': "white ○",
-		'●': "black ●",
-	}
-
-	pieceNames := map[rune]string{
-		'P': "Pawn",
-		'R': "Rook",
-		'K': "Knight",
-		'B': "Bishop",
-		'Q': "Queen",
-		'G': "King",
-	}
-
-	return colorNames[circle] + " " + pieceNames[piece]
 }
 
 // getSquare returns the part piece that is to be moved, either BEFORE or AFTER
