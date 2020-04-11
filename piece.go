@@ -32,32 +32,54 @@ func GetPiece(pieceNotation rune) Piece {
 	return pieces[pieceNotation]
 }
 
-// GetPieceName returns the name of the piece
-// e.g. PAWN -> "Pawn"
-func GetPieceName(piece Piece) string {
-	pieceNames := map[Piece]string{
-		PAWN:   "Pawn",
-		ROOK:   "Rook",
-		KNIGHT: "Knight",
-		BISHOP: "Bishop",
-		QUEEN:  "Queen",
-		KING:   "King",
+// GetPieceName returns given piece in given format
+func GetPieceName(piece Piece, format Format) string {
+	if format == SYMBOL {
+		symbolPieceNames := map[Piece]string{
+			PAWN:   "P",
+			ROOK:   "R",
+			KNIGHT: "K",
+			BISHOP: "B",
+			QUEEN:  "Q",
+			KING:   "G",
+		}
+		return symbolPieceNames[piece]
+	} else if format == VERBOSE {
+		verbosePieceNames := map[Piece]string{
+			PAWN:   "Pawn",
+			ROOK:   "Rook",
+			KNIGHT: "Knight",
+			BISHOP: "Bishop",
+			QUEEN:  "Queen",
+			KING:   "King",
+		}
+		return verbosePieceNames[piece]
+	} else {
+		upperPieceNames := map[Piece]string{
+			PAWN:   "PAWN",
+			ROOK:   "ROOK",
+			KNIGHT: "KNIGHT",
+			BISHOP: "BISHOP",
+			QUEEN:  "QUEEN",
+			KING:   "KING",
+		}
+		return upperPieceNames[piece]
 	}
-	return pieceNames[piece]
 }
 
-// GetPieceAbbr returns the abbreviation of the piece
-// e.g. PAWN -> "P"
-func GetPieceAbbr(piece Piece) string {
-	pieceNames := map[Piece]string{
-		PAWN:   "P",
-		ROOK:   "R",
-		KNIGHT: "K",
-		BISHOP: "B",
-		QUEEN:  "Q",
-		KING:   "G",
+// getPossibleMoves get a location in the board and a piece,
+// and returns all possible location as if the board is empty
+func getPossibleMoves(origin Location, piece Piece) []Location {
+	possibleMoves := []Location{}
+	if piece == ROOK {
+		possibleMoves = GetPossibleRookMoves(origin)
+	} else if piece == KNIGHT {
+		possibleMoves = GetPossibleKnightMoves(origin)
 	}
-	return pieceNames[piece]
+
+	return possibleMoves
+}
+
 // GetPossibleRookMoves returns all possible moves for a Rook,
 // given current location on the board
 func GetPossibleRookMoves(origin Location) []Location {

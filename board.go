@@ -45,11 +45,11 @@ func (b *Board) Execute(m Move) (string, string) {
 	pieceRune := []rune(content)[2]
 	piece := GetPiece(pieceRune)
 	sq := b.getSquare(m, BEFORE)
-	beforeDescription := GetTeamName(m.team, VERBOSE) + " " + GetPieceName(sq.piece)
+	beforeDescription := GetTeamName(m.team, VERBOSE) + " " + GetPieceName(sq.piece, VERBOSE)
 
 	// command piece
 	newRow, newCol := m.getIndexes(AFTER)
-	b[newRow][newCol] = GetTeamName(m.team, SYMBOL) + " " + GetPieceAbbr(piece)
+	b[newRow][newCol] = GetTeamName(m.team, SYMBOL) + " " + GetPieceName(piece, SYMBOL)
 	b[oldRow][oldCol] = "   "
 
 	return beforeDescription, m.AsString(AFTER)
