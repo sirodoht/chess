@@ -10,22 +10,37 @@ const (
 	BLACK
 )
 
-// GetTeamName returns the name of the team
-// e.g. WHITE -> "white ○"
-func GetTeamName(team Team) string {
-	TeamNames := map[Team]string{
-		WHITE: "white ○",
-		BLACK: "black ●",
-	}
-	return TeamNames[team]
-}
+// TeamFormat is in what format the team name should be returned
+type TeamFormat int
 
-// GetTeamSymbol returns the symbol / circle of the team
-// e.g. WHITE -> "○"
-func GetTeamSymbol(team Team) string {
-	TeamNames := map[Team]string{
-		WHITE: "○",
-		BLACK: "●",
+const (
+	// VERBOSE is e.g. "white ○"
+	VERBOSE TeamFormat = iota
+	// SYMBOL is only the circle symbol, e.g. "○"
+	SYMBOL
+	// UPPER is as uppercase letters
+	UPPER
+)
+
+// GetTeamName returns the name of the team
+func GetTeamName(team Team, format TeamFormat) string {
+	if format == VERBOSE {
+		verboseNames := map[Team]string{
+			WHITE: "white ○",
+			BLACK: "black ●",
+		}
+		return verboseNames[team]
+	} else if format == SYMBOL {
+		symbolNames := map[Team]string{
+			WHITE: "○",
+			BLACK: "●",
+		}
+		return symbolNames[team]
+	} else {
+		upperNames := map[Team]string{
+			WHITE: "WHITE",
+			BLACK: "BLACK",
+		}
+		return upperNames[team]
 	}
-	return TeamNames[team]
 }
