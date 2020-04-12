@@ -77,17 +77,19 @@ func GetPossibleMoves(origin Location, piece Piece) []Location {
 		possibleMoves = GetPossibleKnightMoves(origin)
 	} else if piece == BISHOP {
 		possibleMoves = GetPossibleBishopMoves(origin)
+	} else if piece == QUEEN {
+		possibleMoves = GetPossibleQueenMoves(origin)
 	}
 
 	return possibleMoves
 }
 
 // GetPossibleRookMoves returns all possible moves for a Rook,
-// given current location on the board
+// given origin current location on the board
 func GetPossibleRookMoves(origin Location) []Location {
 	possibleMoves := []Location{}
 
-	// same column, for all rows
+	// vertical, all rows, same column
 	newRow := 0
 	for newRow < 8 {
 		if newRow == origin.row {
@@ -102,7 +104,7 @@ func GetPossibleRookMoves(origin Location) []Location {
 		newRow++
 	}
 
-	// same row, for all columns
+	// horizontal, all columns, same row
 	newCol := 0
 	for newCol < 8 {
 		if newCol == origin.col {
@@ -121,7 +123,7 @@ func GetPossibleRookMoves(origin Location) []Location {
 }
 
 // GetPossibleKnightMoves returns all possible moves for a Knight,
-// given current location on the board
+// given origin current location on the board
 func GetPossibleKnightMoves(origin Location) []Location {
 	// searching for Knight moves in a fashion
 	// of two hops forward, then one left, or one right
@@ -218,7 +220,7 @@ func GetPossibleKnightMoves(origin Location) []Location {
 }
 
 // GetPossibleBishopMoves returns all possible moves for a Bishop,
-// given current location on the board
+// given origin current location on the board
 func GetPossibleBishopMoves(origin Location) []Location {
 	possibleMoves := []Location{}
 
@@ -270,5 +272,90 @@ func GetPossibleBishopMoves(origin Location) []Location {
 		newCol = newCol - 1
 	}
 
+	return possibleMoves
+}
+
+// GetPossibleQueenMoves returns all possible moves for a Queen,
+// given origin current location on the board
+func GetPossibleQueenMoves(origin Location) []Location {
+	possibleMoves := []Location{}
+
+	// vertical, all rows, same column
+	newRow := 0
+	for newRow < 8 {
+		if newRow == origin.row {
+			// omit current location
+			newRow++
+			continue
+		}
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: origin.col,
+		})
+		newRow++
+	}
+
+	// horizontal, all columns, same row
+	newCol := 0
+	for newCol < 8 {
+		if newCol == origin.col {
+			// omit current location
+			newCol++
+			continue
+		}
+		possibleMoves = append(possibleMoves, Location{
+			row: origin.row,
+			col: newCol,
+		})
+		newCol++
+	}
+
+	// diagonal top-right
+	newRow = origin.row - 1
+	newCol = origin.col + 1
+	for newRow >= 0 && newCol <= 7 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+		newRow = newRow - 1
+		newCol = newCol + 1
+	}
+
+	// diagonal bottom-right
+	newRow = origin.row + 1
+	newCol = origin.col + 1
+	for newRow <= 7 && newCol <= 7 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+		newRow = newRow + 1
+		newCol = newCol + 1
+	}
+
+	// diagonal bottom-left
+	newRow = origin.row + 1
+	newCol = origin.col - 1
+	for newRow <= 7 && newCol >= 0 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+		newRow = newRow + 1
+		newCol = newCol - 1
+	}
+
+	// diagonal top-left
+	newRow = origin.row - 1
+	newCol = origin.col - 1
+	for newRow >= 0 && newCol >= 0 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+		newRow = newRow - 1
+		newCol = newCol - 1
+	}
 	return possibleMoves
 }

@@ -196,3 +196,90 @@ func TestGetPossibleMovesBishop33(t *testing.T) {
 	findLocation(t, possibleLocations, Location{row: 1, col: 1})
 	findLocation(t, possibleLocations, Location{row: 2, col: 2})
 }
+
+func TestGetPossibleMovesQueen03(t *testing.T) {
+	location := Location{
+		row: 0,
+		col: 3,
+	}
+	possibleLocations := GetPossibleMoves(location, QUEEN)
+	if len(possibleLocations) != 21 {
+		t.Errorf("possible moves for 03 Queen are not 21")
+	}
+
+	// horizontal left
+	findLocation(t, possibleLocations, Location{row: 0, col: 2})
+	findLocation(t, possibleLocations, Location{row: 0, col: 1})
+	findLocation(t, possibleLocations, Location{row: 0, col: 0})
+
+	// horizontal right
+	findLocation(t, possibleLocations, Location{row: 0, col: 4})
+	findLocation(t, possibleLocations, Location{row: 0, col: 5})
+	findLocation(t, possibleLocations, Location{row: 0, col: 6})
+	findLocation(t, possibleLocations, Location{row: 0, col: 7})
+
+	// diagonal bottom-left
+	findLocation(t, possibleLocations, Location{row: 1, col: 2})
+	findLocation(t, possibleLocations, Location{row: 2, col: 1})
+	findLocation(t, possibleLocations, Location{row: 3, col: 0})
+
+	// diagonal bottom-right
+	findLocation(t, possibleLocations, Location{row: 1, col: 4})
+	findLocation(t, possibleLocations, Location{row: 2, col: 5})
+	findLocation(t, possibleLocations, Location{row: 3, col: 6})
+	findLocation(t, possibleLocations, Location{row: 4, col: 7})
+}
+
+func TestGetPossibleMovesQueen43(t *testing.T) {
+	location := Location{
+		row: 4,
+		col: 3,
+	}
+	possibleLocations := GetPossibleMoves(location, QUEEN)
+	if len(possibleLocations) != 27 {
+		t.Error("possible moves for 43 Queen are not 27")
+	}
+
+	// vertical top
+	findLocation(t, possibleLocations, Location{row: 3, col: 3})
+	findLocation(t, possibleLocations, Location{row: 2, col: 3})
+	findLocation(t, possibleLocations, Location{row: 1, col: 3})
+	findLocation(t, possibleLocations, Location{row: 0, col: 3})
+
+	// vertical bottom
+	findLocation(t, possibleLocations, Location{row: 5, col: 3})
+	findLocation(t, possibleLocations, Location{row: 6, col: 3})
+	findLocation(t, possibleLocations, Location{row: 7, col: 3})
+
+	// horizontal left
+	findLocation(t, possibleLocations, Location{row: 4, col: 2})
+	findLocation(t, possibleLocations, Location{row: 4, col: 1})
+	findLocation(t, possibleLocations, Location{row: 4, col: 0})
+
+	// horizontal right
+	findLocation(t, possibleLocations, Location{row: 4, col: 4})
+	findLocation(t, possibleLocations, Location{row: 4, col: 5})
+	findLocation(t, possibleLocations, Location{row: 4, col: 6})
+	findLocation(t, possibleLocations, Location{row: 4, col: 7})
+
+	// diagonal top-right
+	findLocation(t, possibleLocations, Location{row: 3, col: 4})
+	findLocation(t, possibleLocations, Location{row: 2, col: 5})
+	findLocation(t, possibleLocations, Location{row: 1, col: 6})
+	findLocation(t, possibleLocations, Location{row: 0, col: 7})
+
+	// diagonal bottom-right
+	findLocation(t, possibleLocations, Location{row: 5, col: 4})
+	findLocation(t, possibleLocations, Location{row: 6, col: 5})
+	findLocation(t, possibleLocations, Location{row: 7, col: 6})
+
+	// diagonal bottom-left
+	findLocation(t, possibleLocations, Location{row: 5, col: 2})
+	findLocation(t, possibleLocations, Location{row: 6, col: 1})
+	findLocation(t, possibleLocations, Location{row: 7, col: 0})
+
+	// diagonal top-left
+	findLocation(t, possibleLocations, Location{row: 3, col: 2})
+	findLocation(t, possibleLocations, Location{row: 2, col: 1})
+	findLocation(t, possibleLocations, Location{row: 1, col: 0})
+}
