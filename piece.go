@@ -79,6 +79,8 @@ func GetPossibleMoves(origin Location, piece Piece) []Location {
 		possibleMoves = GetPossibleBishopMoves(origin)
 	} else if piece == QUEEN {
 		possibleMoves = GetPossibleQueenMoves(origin)
+	} else if piece == KING {
+		possibleMoves = GetPossibleKingMoves(origin)
 	}
 
 	return possibleMoves
@@ -357,5 +359,94 @@ func GetPossibleQueenMoves(origin Location) []Location {
 		newRow = newRow - 1
 		newCol = newCol - 1
 	}
+
+	return possibleMoves
+}
+
+// GetPossibleKingMoves returns all possible moves for a King,
+// given origin current location on the board
+func GetPossibleKingMoves(origin Location) []Location {
+	possibleMoves := []Location{}
+
+	// vertical top
+	newRow := origin.row - 1
+	newCol := origin.col
+	if newRow >= 0 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+	}
+
+	// diagonal top-right
+	newRow = origin.row - 1
+	newCol = origin.col + 1
+	if newRow >= 0 && newCol <= 7 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+	}
+
+	// horizontal right
+	newRow = origin.row
+	newCol = origin.col + 1
+	if newCol <= 7 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+	}
+
+	// diagonal bottom-right
+	newRow = origin.row + 1
+	newCol = origin.col + 1
+	if newRow <= 7 && newCol <= 7 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+	}
+
+	// vertical bottom
+	newRow = origin.row + 1
+	newCol = origin.col
+	if newRow <= 7 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+	}
+
+	// diagonal bottom-left
+	newRow = origin.row + 1
+	newCol = origin.col - 1
+	if newRow <= 7 && newCol >= 0 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+	}
+
+	// horizontal left
+	newRow = origin.row
+	newCol = origin.col - 1
+	if newCol >= 0 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+	}
+
+	// diagonal top-left
+	newRow = origin.row - 1
+	newCol = origin.col - 1
+	if newRow >= 0 && newCol >= 0 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+	}
+
 	return possibleMoves
 }

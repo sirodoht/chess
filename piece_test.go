@@ -283,3 +283,42 @@ func TestGetPossibleMovesQueen43(t *testing.T) {
 	findLocation(t, possibleLocations, Location{row: 2, col: 1})
 	findLocation(t, possibleLocations, Location{row: 1, col: 0})
 }
+
+func TestGetPossibleMovesKing04(t *testing.T) {
+	location := Location{
+		row: 0,
+		col: 4,
+	}
+	possibleLocations := GetPossibleMoves(location, KING)
+	if len(possibleLocations) != 5 {
+		t.Errorf("possible moves for 04 King are not 5")
+	}
+
+	// counterclockwise
+	findLocation(t, possibleLocations, Location{row: 0, col: 3})
+	findLocation(t, possibleLocations, Location{row: 1, col: 3})
+	findLocation(t, possibleLocations, Location{row: 1, col: 4})
+	findLocation(t, possibleLocations, Location{row: 1, col: 5})
+	findLocation(t, possibleLocations, Location{row: 0, col: 5})
+}
+
+func TestGetPossibleMovesKing35(t *testing.T) {
+	location := Location{
+		row: 3,
+		col: 5,
+	}
+	possibleLocations := GetPossibleMoves(location, KING)
+	if len(possibleLocations) != 8 {
+		t.Errorf("possible moves for 35 King are not 8")
+	}
+
+	// clockwise
+	findLocation(t, possibleLocations, Location{row: 2, col: 5})
+	findLocation(t, possibleLocations, Location{row: 2, col: 6})
+	findLocation(t, possibleLocations, Location{row: 3, col: 6})
+	findLocation(t, possibleLocations, Location{row: 4, col: 6})
+	findLocation(t, possibleLocations, Location{row: 4, col: 5})
+	findLocation(t, possibleLocations, Location{row: 4, col: 4})
+	findLocation(t, possibleLocations, Location{row: 3, col: 4})
+	findLocation(t, possibleLocations, Location{row: 2, col: 4})
+}
