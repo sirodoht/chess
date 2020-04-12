@@ -148,12 +148,16 @@ func TestGetPossibleMovesBishop02(t *testing.T) {
 		row: 0,
 		col: 2,
 	}
-	possibleLocations := GetPossibleMoves(location, KNIGHT)
+	possibleLocations := GetPossibleMoves(location, BISHOP)
 	if len(possibleLocations) != 7 {
 		t.Error("possible moves for 02 Bishop are not 7")
 	}
+
+	// bottom-left
 	findLocation(t, possibleLocations, Location{row: 2, col: 0})
 	findLocation(t, possibleLocations, Location{row: 1, col: 1})
+
+	// bottom-right
 	findLocation(t, possibleLocations, Location{row: 1, col: 3})
 	findLocation(t, possibleLocations, Location{row: 2, col: 4})
 	findLocation(t, possibleLocations, Location{row: 3, col: 5})
