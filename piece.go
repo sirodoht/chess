@@ -75,6 +75,8 @@ func GetPossibleMoves(origin Location, piece Piece) []Location {
 		possibleMoves = GetPossibleRookMoves(origin)
 	} else if piece == KNIGHT {
 		possibleMoves = GetPossibleKnightMoves(origin)
+	} else if piece == BISHOP {
+		possibleMoves = GetPossibleBishopMoves(origin)
 	}
 
 	return possibleMoves
@@ -210,6 +212,62 @@ func GetPossibleKnightMoves(origin Location) []Location {
 				col: newCol,
 			})
 		}
+	}
+
+	return possibleMoves
+}
+
+// GetPossibleBishopMoves returns all possible moves for a Bishop,
+// given current location on the board
+func GetPossibleBishopMoves(origin Location) []Location {
+	possibleMoves := []Location{}
+
+	// go top-right
+	newRow := origin.row - 1
+	newCol := origin.col + 1
+	for newRow >= 0 && newCol <= 7 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+		newRow = newRow - 1
+		newCol = newCol + 1
+	}
+
+	// go bottom-right
+	newRow = origin.row + 1
+	newCol = origin.col + 1
+	for newRow <= 7 && newCol <= 7 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+		newRow = newRow + 1
+		newCol = newCol + 1
+	}
+
+	// go bottom-left
+	newRow = origin.row + 1
+	newCol = origin.col - 1
+	for newRow <= 7 && newCol >= 0 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+		newRow = newRow + 1
+		newCol = newCol - 1
+	}
+
+	// go top-left
+	newRow = origin.row - 1
+	newCol = origin.col - 1
+	for newRow >= 0 && newCol >= 0 {
+		possibleMoves = append(possibleMoves, Location{
+			row: newRow,
+			col: newCol,
+		})
+		newRow = newRow - 1
+		newCol = newCol - 1
 	}
 
 	return possibleMoves
