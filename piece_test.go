@@ -164,3 +164,35 @@ func TestGetPossibleMovesBishop02(t *testing.T) {
 	findLocation(t, possibleLocations, Location{row: 4, col: 6})
 	findLocation(t, possibleLocations, Location{row: 5, col: 7})
 }
+
+func TestGetPossibleMovesBishop33(t *testing.T) {
+	location := Location{
+		row: 3,
+		col: 3,
+	}
+	possibleLocations := GetPossibleMoves(location, BISHOP)
+	if len(possibleLocations) != 13 {
+		t.Error("possible moves for 33 Bishop are not 13")
+	}
+
+	// top-right
+	findLocation(t, possibleLocations, Location{row: 2, col: 4})
+	findLocation(t, possibleLocations, Location{row: 1, col: 5})
+	findLocation(t, possibleLocations, Location{row: 0, col: 6})
+
+	// bottom-right
+	findLocation(t, possibleLocations, Location{row: 4, col: 4})
+	findLocation(t, possibleLocations, Location{row: 5, col: 5})
+	findLocation(t, possibleLocations, Location{row: 6, col: 6})
+	findLocation(t, possibleLocations, Location{row: 7, col: 7})
+
+	// bottom-left
+	findLocation(t, possibleLocations, Location{row: 4, col: 2})
+	findLocation(t, possibleLocations, Location{row: 5, col: 1})
+	findLocation(t, possibleLocations, Location{row: 6, col: 0})
+
+	// top-left
+	findLocation(t, possibleLocations, Location{row: 0, col: 0})
+	findLocation(t, possibleLocations, Location{row: 1, col: 1})
+	findLocation(t, possibleLocations, Location{row: 2, col: 2})
+}
