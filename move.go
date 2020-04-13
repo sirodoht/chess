@@ -213,7 +213,7 @@ func (m Move) IsMoveValid(b Board, turn Team) bool {
 		return false
 	}
 
-	// handle player plays own pieces
+	// handle when player plays enemy's pieces
 	if beforeSquare.team != turn {
 		fmt.Printf("wrong turn")
 		return false
