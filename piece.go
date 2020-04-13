@@ -71,6 +71,7 @@ func GetPieceName(piece Piece, format Format) string {
 // and returns all possible location as if the board is empty
 func GetPossibleMoves(origin Location, piece Piece) []Location {
 	possibleMoves := []Location{}
+
 	if piece == ROOK {
 		possibleMoves = GetPossibleRookMoves(origin)
 	} else if piece == KNIGHT {
@@ -159,92 +160,41 @@ func GetPossibleKnightMoves(origin Location) []Location {
 	// of two hops forward, then one left, or one right
 	possibleMoves := []Location{}
 
-	// handle top hand
+	// handle top hand -> left side
 	newRow := origin.row - 2
-	if newRow >= 0 {
-		newCol := origin.col - 1
-		// check for left side
-		if newCol >= 0 {
-			possibleMoves = append(possibleMoves, Location{
-				row: newRow,
-				col: newCol,
-			})
-		}
-		newCol = origin.col + 1
-		// check for right side
-		if newCol <= 7 {
-			possibleMoves = append(possibleMoves, Location{
-				row: newRow,
-				col: newCol,
-			})
-		}
-	}
+	newCol := origin.col - 1
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
-	// handle right hand
-	newCol := origin.col + 2
-	if newCol <= 7 {
-		newRow := origin.row - 1
-		// check for top side
-		if newRow >= 0 {
-			possibleMoves = append(possibleMoves, Location{
-				row: newRow,
-				col: newCol,
-			})
-		}
+	// handle top hand -> right side
+	newCol = origin.col + 1
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
-		newRow = origin.row + 1
-		// check for bottom side
-		if newRow <= 7 {
-			possibleMoves = append(possibleMoves, Location{
-				row: newRow,
-				col: newCol,
-			})
-		}
-	}
+	// handle right hand -> top side
+	newCol = origin.col + 2
+	newRow = origin.row - 1
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
-	// handle bottom hand
+	// handle right hand -> bottom side
+	newRow = origin.row + 1
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
+
+	// handle bottom hand -> left side
 	newRow = origin.row + 2
-	if newRow <= 7 {
-		newCol := origin.col - 1
-		// check for left side
-		if newCol >= 0 {
-			possibleMoves = append(possibleMoves, Location{
-				row: newRow,
-				col: newCol,
-			})
-		}
+	newCol = origin.col - 1
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
-		newCol = origin.col + 1
-		// check for right side
-		if newCol <= 7 {
-			possibleMoves = append(possibleMoves, Location{
-				row: newRow,
-				col: newCol,
-			})
-		}
-	}
+	// handle bottom hand -> right side
+	newCol = origin.col + 1
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
-	// handle left hand
+	// handle left hand -> top side
 	newCol = origin.col - 2
-	if newCol >= 0 {
-		newRow := origin.row - 1
-		// check for top side
-		if newRow <= 7 {
-			possibleMoves = append(possibleMoves, Location{
-				row: newRow,
-				col: newCol,
-			})
-		}
+	newRow = origin.row - 1
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
-		newRow = origin.row + 1
-		// check for botom side
-		if newRow >= 0 {
-			possibleMoves = append(possibleMoves, Location{
-				row: newRow,
-				col: newCol,
-			})
-		}
-	}
+	// handle left hand -> botom side
+	newRow = origin.row + 1
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
 	return possibleMoves
 }
