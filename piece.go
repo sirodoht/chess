@@ -107,34 +107,45 @@ func AddPossibleMove(row int, col int, possibleMoves []Location) ([]Location, bo
 // given origin current location on the board
 func GetPossibleRookMoves(origin Location) []Location {
 	possibleMoves := []Location{}
+	var inserted bool
 
-	// vertical, all rows, same column
-	newRow := 0
-	for newRow < 8 {
-		if newRow == origin.row {
-			// omit current location
-			newRow++
-			continue
+	// top
+	newRow := origin.row - 1
+	for {
+		possibleMoves, inserted = AddPossibleMove(newRow, origin.col, possibleMoves)
+		if !inserted {
+			break
 		}
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: origin.col,
-		})
+		newRow--
+	}
+
+	// bottom
+	newRow = origin.row + 1
+	for {
+		possibleMoves, inserted = AddPossibleMove(newRow, origin.col, possibleMoves)
+		if !inserted {
+			break
+		}
 		newRow++
 	}
 
-	// horizontal, all columns, same row
-	newCol := 0
-	for newCol < 8 {
-		if newCol == origin.col {
-			// omit current location
-			newCol++
-			continue
+	// left
+	newCol := origin.col - 1
+	for {
+		possibleMoves, inserted = AddPossibleMove(origin.row, newCol, possibleMoves)
+		if !inserted {
+			break
 		}
-		possibleMoves = append(possibleMoves, Location{
-			row: origin.row,
-			col: newCol,
-		})
+		newCol--
+	}
+
+	// right
+	newCol = origin.col + 1
+	for {
+		possibleMoves, inserted = AddPossibleMove(origin.row, newCol, possibleMoves)
+		if !inserted {
+			break
+		}
 		newCol++
 	}
 
