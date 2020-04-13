@@ -81,9 +81,26 @@ func GetPossibleMoves(origin Location, piece Piece) []Location {
 		possibleMoves = GetPossibleQueenMoves(origin)
 	} else if piece == KING {
 		possibleMoves = GetPossibleKingMoves(origin)
+	} else if piece == PAWN {
+		possibleMoves = GetPossiblePawnMoves(origin)
 	}
 
 	return possibleMoves
+}
+
+// AddPossibleMove adds a possible move to given possibleMoves slice
+// after validating that row and col are inside board.
+// Also returns whether the move was inserted.
+func AddPossibleMove(row int, col int, possibleMoves []Location) ([]Location, bool) {
+	inserted := false
+	if row >= 0 && row <= 7 && col >= 0 && col <= 7 {
+		possibleMoves = append(possibleMoves, Location{
+			row: row,
+			col: col,
+		})
+		inserted = true
+	}
+	return possibleMoves, inserted
 }
 
 // GetPossibleRookMoves returns all possible moves for a Rook,
@@ -447,6 +464,50 @@ func GetPossibleKingMoves(origin Location) []Location {
 			col: newCol,
 		})
 	}
+
+	return possibleMoves
+}
+
+// GetPossiblePawnMoves returns all possible moves for a Pawn,
+// given origin current location on the board, without knowing if its white or black.
+func GetPossiblePawnMoves(origin Location) []Location {
+	possibleMoves := []Location{}
+
+	// find out if pawn is on first move
+	firstMove := false
+	if origin.row == 1 || origin.row == 6 {
+		firstMove = true
+	}
+
+	// if white / down side
+	newRow := origin.row - 1
+	possibleMoves, _ = AddPossibleMove(newRow, origin.col, possibleMoves)
+	if firstMove {
+		newRow--
+		possibleMoves, _ = AddPossibleMove(newRow, origin.col, possibleMoves)
+	}
+
+	// if white / down and capture opponents piece
+	newRow = origin.row - 1
+	newCol := origin.col - 1 // left side
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
+	newCol = origin.col + 1 // right side
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
+
+	// if black / up side
+	newRow = origin.row + 1
+	possibleMoves, _ = AddPossibleMove(newRow, origin.col, possibleMoves)
+	if firstMove {
+		newRow++
+		possibleMoves, _ = AddPossibleMove(newRow, origin.col, possibleMoves)
+	}
+
+	// if black / up and capture opponents piece
+	newRow = origin.row + 1
+	newCol = origin.col - 1 // left side
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
+	newCol = origin.col + 1 // right side
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
 	return possibleMoves
 }

@@ -322,3 +322,29 @@ func TestGetPossibleMovesKing35(t *testing.T) {
 	findLocation(t, possibleLocations, Location{row: 3, col: 4})
 	findLocation(t, possibleLocations, Location{row: 2, col: 4})
 }
+
+func TestGetPossibleMovesPawn65(t *testing.T) {
+	location := Location{
+		row: 6,
+		col: 5,
+	}
+	possibleLocations := GetPossibleMoves(location, PAWN)
+	if len(possibleLocations) != 7 {
+		t.Errorf("possible moves for 65 Pawn are not 7")
+	}
+
+	// forward one
+	findLocation(t, possibleLocations, Location{row: 5, col: 5})
+	// forward twice
+	findLocation(t, possibleLocations, Location{row: 4, col: 5})
+	// forward left capture
+	findLocation(t, possibleLocations, Location{row: 5, col: 4})
+	// forward right capture
+	findLocation(t, possibleLocations, Location{row: 5, col: 6})
+	// backwards once
+	findLocation(t, possibleLocations, Location{row: 7, col: 5})
+	// backwards capture left
+	findLocation(t, possibleLocations, Location{row: 7, col: 4})
+	// backwards capture right
+	findLocation(t, possibleLocations, Location{row: 7, col: 6})
+}
