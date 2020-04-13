@@ -98,7 +98,7 @@ func (b Board) GetSquare(m Move, part Part) Square {
 		team = BLACK
 	}
 
-	pieceRune := []rune(content)[1]
+	pieceRune := []rune(content)[2]
 	isEmpty := false
 	if pieceRune == ' ' {
 		isEmpty = true
