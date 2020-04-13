@@ -18,9 +18,9 @@ $ go run .
 | 7 | ○ P | ○ P | ○ P | ○ P | ○ P | ○ P | ○ P | ○ P |
 | 8 | ○ R | ○ K | ○ B | ○ Q | ○ G | ○ B | ○ K | ○ R |
 +---+-----+-----+-----+-----+-----+-----+-----+-----+
-WHITE plays. Enter next move: d7 d5
+WHITE plays. Enter next move: e7 e5
 
-MOVE: white ○ Pawn moved to d5
+MOVE: white ○ Pawn moved to e5
 +---+-----+-----+-----+-----+-----+-----+-----+-----+
 |   |  a  |  b  |  c  |  d  |  e  |  f  |  g  |  h  |
 +---+-----+-----+-----+-----+-----+-----+-----+-----+
