@@ -40,17 +40,18 @@ type Location struct {
 // Execute applies a move to the board
 // Essentially, it is the move of a piece on the board.
 func (b *Board) Execute(m Move) (string, string) {
-	oldRow, oldCol := m.GetIndexes(BEFORE)
-	content := b[oldRow][oldCol]
+	// parse content to generate description
+	oldLocation := m.GetLocation(BEFORE)
+	content := b[oldLocation.row][oldLocation.col]
 	pieceRune := []rune(content)[2]
 	piece := GetPiece(pieceRune)
 	sq := b.GetSquare(m, BEFORE)
 	beforeDescription := GetTeamName(m.team, VERBOSE) + " " + GetPieceName(sq.piece, VERBOSE)
 
-	// command piece
-	newRow, newCol := m.GetIndexes(AFTER)
-	b[newRow][newCol] = GetTeamName(m.team, SYMBOL) + " " + GetPieceName(piece, SYMBOL)
-	b[oldRow][oldCol] = "   "
+	// change piece position on the board
+	newLocation := m.GetLocation(AFTER)
+	b[newLocation.row][newLocation.col] = GetTeamName(m.team, SYMBOL) + " " + GetPieceName(piece, SYMBOL)
+	b[oldLocation.row][oldLocation.col] = "   "
 
 	return beforeDescription, m.AsNotation(AFTER)
 }
@@ -91,8 +92,8 @@ func (b *Board) Render() {
 
 // GetSquare returns the part piece that is to be moved, either BEFORE or AFTER
 func (b Board) GetSquare(m Move, part Part) Square {
-	row, col := m.GetIndexes(part)
-	content := b[row][col]
+	location := m.GetLocation(part)
+	content := b[location.row][location.col]
 
 	color := []rune(content)[0]
 	team := WHITE

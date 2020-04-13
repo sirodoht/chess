@@ -60,8 +60,8 @@ func NewMove(team Team, command string) (Move, error) {
 	return m, nil
 }
 
-// GetIndexes returns the board indexes, with board as a 2d array
-func (m Move) GetIndexes(part Part) (int, int) {
+// GetLocation returns the Location struct of either BEFORE or AFTER parts
+func (m Move) GetLocation(part Part) Location {
 	// row
 	row := m.afterNumber - 1
 	if part == BEFORE {
@@ -84,7 +84,10 @@ func (m Move) GetIndexes(part Part) (int, int) {
 		col = columnLetters[m.afterLetter]
 	}
 
-	return row, col
+	return Location{
+		row: row,
+		col: col,
+	}
 }
 
 // AsNotation returns the before or after part of the command as chess notation
