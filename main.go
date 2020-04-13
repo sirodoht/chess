@@ -8,10 +8,9 @@ import (
 )
 
 func main() {
-	// initialize board
+	// initialize game
 	board := Board{}
 	board.Init()
-
 	turn := WHITE
 
 	// main game loop
@@ -28,6 +27,7 @@ func main() {
 		}
 		command = strings.TrimSpace(command)
 
+		// create move
 		move, err := NewMove(board, turn, command)
 		if err != nil {
 			fmt.Println("\nInvalid move. Please try again.")

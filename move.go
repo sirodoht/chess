@@ -209,15 +209,21 @@ func (m Move) IsMoveValid(b Board, turn Team) bool {
 	// handle empty square on the before part of the move
 	beforeSquare := b.GetSquare(m, BEFORE)
 	if beforeSquare.isEmpty {
-		fmt.Printf("empty before: %+v\n", beforeSquare)
+		fmt.Println("empty origin")
+		return false
+	}
+
+	// handle player plays own pieces
+	if beforeSquare.team != turn {
+		fmt.Printf("wrong turn")
 		return false
 	}
 
 	afterSquare := b.GetSquare(m, AFTER)
 	if !m.IsCapture(b) {
-		fmt.Println("no capture")
+		fmt.Println("no capture case")
 		if !afterSquare.isEmpty {
-			fmt.Println("no empty")
+			fmt.Println("non empty destination")
 			return false
 		}
 
@@ -231,7 +237,7 @@ func (m Move) IsMoveValid(b Board, turn Team) bool {
 			}
 		}
 		if !foundDestination {
-			fmt.Println("no destination found")
+			fmt.Println("move not found in possible moves")
 			return false
 		}
 	}
