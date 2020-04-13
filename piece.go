@@ -69,20 +69,20 @@ func GetPieceName(piece Piece, format Format) string {
 
 // GetPossibleMoves get a location in the board and a piece,
 // and returns all possible location as if the board is empty
-func GetPossibleMoves(origin Location, piece Piece) []Location {
+func (p Piece) GetPossibleMoves(origin Location) []Location {
 	possibleMoves := []Location{}
 
-	if piece == ROOK {
+	if p == ROOK {
 		possibleMoves = GetPossibleRookMoves(origin)
-	} else if piece == KNIGHT {
+	} else if p == KNIGHT {
 		possibleMoves = GetPossibleKnightMoves(origin)
-	} else if piece == BISHOP {
+	} else if p == BISHOP {
 		possibleMoves = GetPossibleBishopMoves(origin)
-	} else if piece == QUEEN {
+	} else if p == QUEEN {
 		possibleMoves = GetPossibleQueenMoves(origin)
-	} else if piece == KING {
+	} else if p == KING {
 		possibleMoves = GetPossibleKingMoves(origin)
-	} else if piece == PAWN {
+	} else if p == PAWN {
 		possibleMoves = GetPossiblePawnMoves(origin)
 	}
 
