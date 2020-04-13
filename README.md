@@ -39,7 +39,7 @@ BLACK plays. Enter next move:
 ## Run
 
 ```
-$ go run main.go
+$ go run .
 ```
 
 ## Test
