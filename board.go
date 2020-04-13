@@ -41,16 +41,13 @@ type Location struct {
 // Essentially, it is the move of a piece on the board.
 func (b *Board) Execute(m Move) (string, string) {
 	// parse content to generate description
-	oldLocation := m.GetLocation(BEFORE)
-	content := b[oldLocation.row][oldLocation.col]
-	pieceRune := []rune(content)[2]
-	piece := GetPiece(pieceRune)
-	sq := b.GetSquare(m, BEFORE)
-	beforeDescription := GetTeamName(m.team, VERBOSE) + " " + GetPieceName(sq.piece, VERBOSE)
+	square := b.GetSquare(m, BEFORE)
+	beforeDescription := GetTeamName(m.team, VERBOSE) + " " + GetPieceName(square.piece, VERBOSE)
 
 	// change piece position on the board
+	oldLocation := m.GetLocation(BEFORE)
 	newLocation := m.GetLocation(AFTER)
-	b[newLocation.row][newLocation.col] = GetTeamName(m.team, SYMBOL) + " " + GetPieceName(piece, SYMBOL)
+	b[newLocation.row][newLocation.col] = GetTeamName(m.team, SYMBOL) + " " + GetPieceName(square.piece, SYMBOL)
 	b[oldLocation.row][oldLocation.col] = "   "
 
 	return beforeDescription, m.AsNotation(AFTER)
