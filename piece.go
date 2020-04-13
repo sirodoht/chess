@@ -205,51 +205,43 @@ func GetPossibleBishopMoves(origin Location) []Location {
 	possibleMoves := []Location{}
 
 	// go top-right
-	newRow := origin.row - 1
-	newCol := origin.col + 1
-	for newRow >= 0 && newCol <= 7 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
+	newRow := origin.row
+	newCol := origin.col
+	inserted := true
+	for inserted {
 		newRow = newRow - 1
 		newCol = newCol + 1
+		possibleMoves, inserted = AddPossibleMove(newRow, newCol, possibleMoves)
 	}
 
 	// go bottom-right
-	newRow = origin.row + 1
-	newCol = origin.col + 1
-	for newRow <= 7 && newCol <= 7 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
+	newRow = origin.row
+	newCol = origin.col
+	inserted = true
+	for inserted {
 		newRow = newRow + 1
 		newCol = newCol + 1
+		possibleMoves, inserted = AddPossibleMove(newRow, newCol, possibleMoves)
 	}
 
 	// go bottom-left
-	newRow = origin.row + 1
-	newCol = origin.col - 1
-	for newRow <= 7 && newCol >= 0 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
+	newRow = origin.row
+	newCol = origin.col
+	inserted = true
+	for inserted {
 		newRow = newRow + 1
 		newCol = newCol - 1
+		possibleMoves, inserted = AddPossibleMove(newRow, newCol, possibleMoves)
 	}
 
 	// go top-left
-	newRow = origin.row - 1
-	newCol = origin.col - 1
-	for newRow >= 0 && newCol >= 0 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
+	newRow = origin.row
+	newCol = origin.col
+	inserted = true
+	for inserted {
 		newRow = newRow - 1
 		newCol = newCol - 1
+		possibleMoves, inserted = AddPossibleMove(newRow, newCol, possibleMoves)
 	}
 
 	return possibleMoves
