@@ -251,83 +251,86 @@ func GetPossibleBishopMoves(origin Location) []Location {
 // given origin current location on the board
 func GetPossibleQueenMoves(origin Location) []Location {
 	possibleMoves := []Location{}
+	var inserted bool
 
-	// vertical, all rows, same column
-	newRow := 0
-	for newRow < 8 {
-		if newRow == origin.row {
-			// omit current location
-			newRow++
-			continue
+	// top
+	newRow := origin.row - 1
+	for {
+		possibleMoves, inserted = AddPossibleMove(newRow, origin.col, possibleMoves)
+		if !inserted {
+			break
 		}
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: origin.col,
-		})
+		newRow--
+	}
+
+	// bottom
+	newRow = origin.row + 1
+	for {
+		possibleMoves, inserted = AddPossibleMove(newRow, origin.col, possibleMoves)
+		if !inserted {
+			break
+		}
 		newRow++
 	}
 
-	// horizontal, all columns, same row
-	newCol := 0
-	for newCol < 8 {
-		if newCol == origin.col {
-			// omit current location
-			newCol++
-			continue
+	// left
+	newCol := origin.col - 1
+	for {
+		possibleMoves, inserted = AddPossibleMove(origin.row, newCol, possibleMoves)
+		if !inserted {
+			break
 		}
-		possibleMoves = append(possibleMoves, Location{
-			row: origin.row,
-			col: newCol,
-		})
+		newCol--
+	}
+
+	// right
+	newCol = origin.col + 1
+	for {
+		possibleMoves, inserted = AddPossibleMove(origin.row, newCol, possibleMoves)
+		if !inserted {
+			break
+		}
 		newCol++
 	}
 
 	// diagonal top-right
-	newRow = origin.row - 1
-	newCol = origin.col + 1
-	for newRow >= 0 && newCol <= 7 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
+	newRow = origin.row
+	newCol = origin.col
+	inserted = true
+	for inserted {
 		newRow = newRow - 1
 		newCol = newCol + 1
+		possibleMoves, inserted = AddPossibleMove(newRow, newCol, possibleMoves)
 	}
 
 	// diagonal bottom-right
-	newRow = origin.row + 1
-	newCol = origin.col + 1
-	for newRow <= 7 && newCol <= 7 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
+	newRow = origin.row
+	newCol = origin.col
+	inserted = true
+	for inserted {
 		newRow = newRow + 1
 		newCol = newCol + 1
+		possibleMoves, inserted = AddPossibleMove(newRow, newCol, possibleMoves)
 	}
 
 	// diagonal bottom-left
-	newRow = origin.row + 1
-	newCol = origin.col - 1
-	for newRow <= 7 && newCol >= 0 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
+	newRow = origin.row
+	newCol = origin.col
+	inserted = true
+	for inserted {
 		newRow = newRow + 1
 		newCol = newCol - 1
+		possibleMoves, inserted = AddPossibleMove(newRow, newCol, possibleMoves)
 	}
 
 	// diagonal top-left
-	newRow = origin.row - 1
-	newCol = origin.col - 1
-	for newRow >= 0 && newCol >= 0 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
+	newRow = origin.row
+	newCol = origin.col
+	inserted = true
+	for inserted {
 		newRow = newRow - 1
 		newCol = newCol - 1
+		possibleMoves, inserted = AddPossibleMove(newRow, newCol, possibleMoves)
 	}
 
 	return possibleMoves
@@ -341,82 +344,42 @@ func GetPossibleKingMoves(origin Location) []Location {
 	// vertical top
 	newRow := origin.row - 1
 	newCol := origin.col
-	if newRow >= 0 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
-	}
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
 	// diagonal top-right
 	newRow = origin.row - 1
 	newCol = origin.col + 1
-	if newRow >= 0 && newCol <= 7 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
-	}
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
 	// horizontal right
 	newRow = origin.row
 	newCol = origin.col + 1
-	if newCol <= 7 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
-	}
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
 	// diagonal bottom-right
 	newRow = origin.row + 1
 	newCol = origin.col + 1
-	if newRow <= 7 && newCol <= 7 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
-	}
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
 	// vertical bottom
 	newRow = origin.row + 1
 	newCol = origin.col
-	if newRow <= 7 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
-	}
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
 	// diagonal bottom-left
 	newRow = origin.row + 1
 	newCol = origin.col - 1
-	if newRow <= 7 && newCol >= 0 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
-	}
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
 	// horizontal left
 	newRow = origin.row
 	newCol = origin.col - 1
-	if newCol >= 0 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
-	}
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
 	// diagonal top-left
 	newRow = origin.row - 1
 	newCol = origin.col - 1
-	if newRow >= 0 && newCol >= 0 {
-		possibleMoves = append(possibleMoves, Location{
-			row: newRow,
-			col: newCol,
-		})
-	}
+	possibleMoves, _ = AddPossibleMove(newRow, newCol, possibleMoves)
 
 	return possibleMoves
 }
