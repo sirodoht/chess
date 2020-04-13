@@ -334,7 +334,7 @@ func TestGetPossibleMovesPawn65(t *testing.T) {
 		t.Errorf("possible moves for 65 Pawn were expected to be 7 but they were %d", len(possibleLocations))
 	}
 
-	// forward one
+	// forward once
 	findLocation(t, possibleLocations, Location{row: 5, col: 5})
 	// forward twice
 	findLocation(t, possibleLocations, Location{row: 4, col: 5})
@@ -348,4 +348,28 @@ func TestGetPossibleMovesPawn65(t *testing.T) {
 	findLocation(t, possibleLocations, Location{row: 7, col: 4})
 	// backwards capture right
 	findLocation(t, possibleLocations, Location{row: 7, col: 6})
+}
+
+func TestGetPossibleMovesPawn22(t *testing.T) {
+	location := Location{
+		row: 2,
+		col: 2,
+	}
+	possibleLocations := GetPossibleMoves(location, PAWN)
+	if len(possibleLocations) != 6 {
+		t.Errorf("possible moves for 22 Pawn were expected to be 6 but they were %d", len(possibleLocations))
+	}
+
+	// forward once
+	findLocation(t, possibleLocations, Location{row: 3, col: 2})
+	// forward left capture
+	findLocation(t, possibleLocations, Location{row: 3, col: 1})
+	// forward right capture
+	findLocation(t, possibleLocations, Location{row: 3, col: 3})
+	// backwards once
+	findLocation(t, possibleLocations, Location{row: 1, col: 2})
+	// backwards capture left
+	findLocation(t, possibleLocations, Location{row: 1, col: 1})
+	// backwards capture right
+	findLocation(t, possibleLocations, Location{row: 1, col: 3})
 }
