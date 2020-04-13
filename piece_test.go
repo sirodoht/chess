@@ -20,7 +20,7 @@ func TestGetPossibleMovesRook00(t *testing.T) {
 	}
 	possibleLocations := GetPossibleMoves(location, ROOK)
 	if len(possibleLocations) != 14 {
-		t.Error("wrong number of 00 Rook possible moves")
+		t.Errorf("possible moves for 00 Rook were expected to be 14 but they are %d", len(possibleLocations))
 	}
 	findLocation(t, possibleLocations, Location{row: 1, col: 0})
 	findLocation(t, possibleLocations, Location{row: 2, col: 0})
@@ -45,7 +45,8 @@ func TestGetPossibleMovesRook07(t *testing.T) {
 	}
 	possibleLocations := GetPossibleMoves(location, ROOK)
 	if len(possibleLocations) != 14 {
-		t.Error("wrong number of 07 Rook possible moves")
+		t.Errorf("possible moves for 07 Rook were expected to be 14 but they are %d", len(possibleLocations))
+
 	}
 	findLocation(t, possibleLocations, Location{row: 1, col: 7})
 	findLocation(t, possibleLocations, Location{row: 2, col: 7})
@@ -70,7 +71,7 @@ func TestGetPossibleMovesRook44(t *testing.T) {
 	}
 	possibleLocations := GetPossibleMoves(location, ROOK)
 	if len(possibleLocations) != 14 {
-		t.Error("possible moves for 44 Rook are not 14")
+		t.Errorf("possible moves for 44 Rook were expected to be 14 but they are %d", len(possibleLocations))
 	}
 	findLocation(t, possibleLocations, Location{row: 0, col: 4})
 	findLocation(t, possibleLocations, Location{row: 1, col: 4})
@@ -95,7 +96,7 @@ func TestGetPossibleMovesKnight01(t *testing.T) {
 	}
 	possibleLocations := GetPossibleMoves(location, KNIGHT)
 	if len(possibleLocations) != 3 {
-		t.Error("possible moves for 01 Knight are not 3")
+		t.Errorf("possible moves for 01 Knight were expected to be 3 but they are %d", len(possibleLocations))
 	}
 	findLocation(t, possibleLocations, Location{row: 2, col: 0})
 	findLocation(t, possibleLocations, Location{row: 2, col: 2})
@@ -109,7 +110,7 @@ func TestGetPossibleMovesKnight71(t *testing.T) {
 	}
 	possibleLocations := GetPossibleMoves(location, KNIGHT)
 	if len(possibleLocations) != 3 {
-		t.Error("possible moves for 71 Knight are not 3")
+		t.Errorf("possible moves for 71 Knight were expected to be 3 but they are %d", len(possibleLocations))
 	}
 	findLocation(t, possibleLocations, Location{row: 5, col: 0})
 	findLocation(t, possibleLocations, Location{row: 5, col: 2})
@@ -123,7 +124,7 @@ func TestGetPossibleMovesKnight43(t *testing.T) {
 	}
 	possibleLocations := GetPossibleMoves(location, KNIGHT)
 	if len(possibleLocations) != 8 {
-		t.Error("possible moves for 43 Knight are not 8")
+		t.Errorf("possible moves for 43 Knight were expected to be 8 but they are %d", len(possibleLocations))
 	}
 
 	// top hand
@@ -150,7 +151,7 @@ func TestGetPossibleMovesBishop02(t *testing.T) {
 	}
 	possibleLocations := GetPossibleMoves(location, BISHOP)
 	if len(possibleLocations) != 7 {
-		t.Error("possible moves for 02 Bishop are not 7")
+		t.Errorf("possible moves for 02 Bishop were expected to be 7 but they are %d", len(possibleLocations))
 	}
 
 	// bottom-left
@@ -172,7 +173,7 @@ func TestGetPossibleMovesBishop33(t *testing.T) {
 	}
 	possibleLocations := GetPossibleMoves(location, BISHOP)
 	if len(possibleLocations) != 13 {
-		t.Error("possible moves for 33 Bishop are not 13")
+		t.Errorf("possible moves for 33 Bishop were expected to be 13 but they are %d", len(possibleLocations))
 	}
 
 	// top-right
@@ -204,7 +205,7 @@ func TestGetPossibleMovesQueen03(t *testing.T) {
 	}
 	possibleLocations := GetPossibleMoves(location, QUEEN)
 	if len(possibleLocations) != 21 {
-		t.Errorf("possible moves for 03 Queen are not 21")
+		t.Errorf("possible moves for 03 Queen were expected to be 21 but they were %d", len(possibleLocations))
 	}
 
 	// horizontal left
@@ -237,7 +238,7 @@ func TestGetPossibleMovesQueen43(t *testing.T) {
 	}
 	possibleLocations := GetPossibleMoves(location, QUEEN)
 	if len(possibleLocations) != 27 {
-		t.Error("possible moves for 43 Queen are not 27")
+		t.Errorf("possible moves for 43 Queen were expected to be 27 but they are %d", len(possibleLocations))
 	}
 
 	// vertical top
@@ -291,7 +292,7 @@ func TestGetPossibleMovesKing04(t *testing.T) {
 	}
 	possibleLocations := GetPossibleMoves(location, KING)
 	if len(possibleLocations) != 5 {
-		t.Errorf("possible moves for 04 King are not 5")
+		t.Errorf("possible moves for 04 King were expected to be 5 but they were %d", len(possibleLocations))
 	}
 
 	// counterclockwise
@@ -309,7 +310,7 @@ func TestGetPossibleMovesKing35(t *testing.T) {
 	}
 	possibleLocations := GetPossibleMoves(location, KING)
 	if len(possibleLocations) != 8 {
-		t.Errorf("possible moves for 35 King are not 8")
+		t.Errorf("possible moves for 35 King were expected to be 8 but they were %d", len(possibleLocations))
 	}
 
 	// clockwise
@@ -330,7 +331,7 @@ func TestGetPossibleMovesPawn65(t *testing.T) {
 	}
 	possibleLocations := GetPossibleMoves(location, PAWN)
 	if len(possibleLocations) != 7 {
-		t.Errorf("possible moves for 65 Pawn are not 7")
+		t.Errorf("possible moves for 65 Pawn were expected to be 7 but they were %d", len(possibleLocations))
 	}
 
 	// forward one
