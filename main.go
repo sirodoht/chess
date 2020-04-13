@@ -28,7 +28,7 @@ func main() {
 		}
 		command = strings.TrimSpace(command)
 
-		move, err := NewMove(turn, command)
+		move, err := NewMove(board, turn, command)
 		if err != nil {
 			fmt.Println("\nInvalid move. Please try again.")
 			continue

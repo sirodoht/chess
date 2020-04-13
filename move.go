@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -28,8 +29,8 @@ const (
 	AFTER
 )
 
-// NewMove returns a new Move struct out of a command string
-func NewMove(team Team, command string) (Move, error) {
+// NewMove validates and returns a new Move struct out of a command string
+func NewMove(b Board, team Team, command string) (Move, error) {
 	// check command validity
 	if !IsCommandValid(command) {
 		return Move{}, errors.New("invalid move")
@@ -56,6 +57,11 @@ func NewMove(team Team, command string) (Move, error) {
 		panic(err)
 	}
 	m.afterNumber = afterNumber
+
+	// check move validity
+	if !m.IsMoveValid(b, team) {
+		return Move{}, errors.New("invalid move")
+	}
 
 	return m, nil
 }
@@ -178,4 +184,57 @@ func IsNumberValid(number rune) bool {
 		}
 	}
 	return valid
+}
+
+// IsCapture identifies whether move is a capture of enemy piece
+func (m Move) IsCapture(b Board) bool {
+	beforeSquare := b.GetSquare(m, BEFORE)
+	afterSquare := b.GetSquare(m, AFTER)
+
+	// check emptiness
+	if beforeSquare.isEmpty || afterSquare.isEmpty {
+		return false
+	}
+
+	// check team difference
+	if beforeSquare.team == afterSquare.team {
+		return false
+	}
+
+	return true
+}
+
+// IsMoveValid checks whether the move is valid, given board and whose turn it is
+func (m Move) IsMoveValid(b Board, turn Team) bool {
+	// handle empty square on the before part of the move
+	beforeSquare := b.GetSquare(m, BEFORE)
+	if beforeSquare.isEmpty {
+		fmt.Printf("empty before: %+v\n", beforeSquare)
+		return false
+	}
+
+	afterSquare := b.GetSquare(m, AFTER)
+	if !m.IsCapture(b) {
+		fmt.Println("no capture")
+		if !afterSquare.isEmpty {
+			fmt.Println("no empty")
+			return false
+		}
+
+		destination := m.GetLocation(AFTER)
+		possibleMoves := beforeSquare.piece.GetPossibleMoves(m.GetLocation(BEFORE))
+		// check if destination is in possible moves
+		foundDestination := false
+		for _, move := range possibleMoves {
+			if destination.row == move.row && destination.col == move.col {
+				foundDestination = true
+			}
+		}
+		if !foundDestination {
+			fmt.Println("no destination found")
+			return false
+		}
+	}
+
+	return true
 }

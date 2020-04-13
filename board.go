@@ -40,16 +40,14 @@ type Location struct {
 // Execute applies a move to the board
 // Essentially, it is the move of a piece on the board.
 func (b *Board) Execute(m Move) (string, string) {
-	// parse content to generate description
-	square := b.GetSquare(m, BEFORE)
-	beforeDescription := GetTeamName(m.team, VERBOSE) + " " + GetPieceName(square.piece, VERBOSE)
-
 	// change piece position on the board
 	oldLocation := m.GetLocation(BEFORE)
 	newLocation := m.GetLocation(AFTER)
+	square := b.GetSquare(m, BEFORE)
 	b[newLocation.row][newLocation.col] = GetTeamName(m.team, SYMBOL) + " " + GetPieceName(square.piece, SYMBOL)
 	b[oldLocation.row][oldLocation.col] = "   "
 
+	beforeDescription := GetTeamName(m.team, VERBOSE) + " " + GetPieceName(square.piece, VERBOSE)
 	return beforeDescription, m.AsNotation(AFTER)
 }
 
@@ -121,20 +119,4 @@ func (b Board) GetSquare(m Move, part Part) Square {
 	}
 
 	return square
-}
-
-// IsMoveValid checks whether the move is valid in the current board
-func (b Board) IsMoveValid(m Move) bool {
-	beforeSquare := b.GetSquare(m, BEFORE)
-	if beforeSquare.isEmpty {
-		return false
-	}
-
-	if beforeSquare.piece == ROOK {
-		targetSquare := b.GetSquare(m, AFTER)
-		if beforeSquare.team == targetSquare.team {
-			return false
-		}
-	}
-	return true
 }
