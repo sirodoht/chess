@@ -8,6 +8,8 @@ const (
 	WHITE Team = iota
 	// BLACK is the black team / player on the chess board
 	BLACK
+	// NEITHER is when the square has no piece on it
+	NEITHER
 )
 
 // GetTeamName returns the name of the team

@@ -91,9 +91,48 @@ func (b Board) GetSquare(m Move, part Part) Square {
 	content := b[location.row][location.col]
 
 	color := []rune(content)[0]
-	team := WHITE
+	team := NEITHER
 	if color == '●' {
 		team = BLACK
+	} else if color == '○' {
+		team = WHITE
+	}
+
+	pieceRune := []rune(content)[2]
+	isEmpty := false
+	if pieceRune == ' ' {
+		isEmpty = true
+	}
+	piece := PAWN
+	pieceSymbols := map[rune]Piece{
+		'P': PAWN,
+		'R': ROOK,
+		'K': KNIGHT,
+		'B': BISHOP,
+		'Q': QUEEN,
+		'G': KING,
+	}
+	piece = pieceSymbols[pieceRune]
+
+	square := Square{
+		team:    team,
+		piece:   piece,
+		isEmpty: isEmpty,
+	}
+
+	return square
+}
+
+// ParseSquare returns square based on indexes
+func (b Board) ParseSquare(row int, col int) Square {
+	content := b[row][col]
+
+	color := []rune(content)[0]
+	team := NEITHER
+	if color == '●' {
+		team = BLACK
+	} else if color == '○' {
+		team = WHITE
 	}
 
 	pieceRune := []rune(content)[2]
