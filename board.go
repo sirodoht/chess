@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 	"strconv"
 
@@ -35,6 +36,25 @@ type Square struct {
 type Location struct {
 	row int
 	col int
+}
+
+// NewLocation validates and returns a new Location struct
+func NewLocation(row int, col int) (Location, error) {
+	if row >= 0 && row <= 7 && col >= 0 && col <= 7 {
+		return Location{
+			row: row,
+			col: col,
+		}, nil
+	}
+	return Location{}, errors.New("invalid row/col")
+}
+
+// IsLocationValid validates location row and col
+func IsLocationValid(row int, col int) bool {
+	if row >= 0 && row <= 7 && col >= 0 && col <= 7 {
+		return true
+	}
+	return false
 }
 
 // Execute applies a move to the board

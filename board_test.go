@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestSimplePawnMove(t *testing.T) {
+func TestBoardPawn(t *testing.T) {
 	board := Board{}
 	board.Init()
 
