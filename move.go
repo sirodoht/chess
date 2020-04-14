@@ -29,11 +29,41 @@ const (
 	AFTER
 )
 
+// Strategy defines whether a move is a capture one, or a simple one,
+// or a castling, etc.
+type Strategy int
+
+const (
+	// NORMAL is when player moves piece to an empty square
+	NORMAL Strategy = iota
+
+	// CAPTURE is when player moves piece to capture enemy piece
+	CAPTURE
+
+	// CASTLING is when player executes a castling between King and Rook
+	CASTLING
+
+	// ENPASSANT is when player captures enemy pawn in passing
+	ENPASSANT
+
+	// PROMOTION is when pawn reaches eighth square and is promoted
+	PROMOTION
+
+	// CHECK is when player threatens enemy's King
+	CHECK
+
+	// CHECKMATE is when player checkmates enemy
+	CHECKMATE
+
+	// STALEMATE is when non-checked player has no legal move to make
+	STALEMATE
+)
+
 // NewMove validates and returns a new Move struct out of a command string
 func NewMove(b Board, team Team, command string) (Move, error) {
 	// check command validity
 	if !IsCommandValid(command) {
-		return Move{}, errors.New("invalid move")
+		return Move{}, errors.New("invalid command")
 	}
 
 	// parse command
@@ -59,7 +89,7 @@ func NewMove(b Board, team Team, command string) (Move, error) {
 	m.afterNumber = afterNumber
 
 	// check move validity
-	if !m.IsMoveValid(b, team) {
+	if !m.IsValid(b, team) {
 		return Move{}, errors.New("invalid move")
 	}
 
@@ -186,27 +216,18 @@ func IsNumberValid(number rune) bool {
 	return valid
 }
 
-// IsCapture identifies whether move is a capture of enemy piece
-func (m Move) IsCapture(b Board) bool {
-	beforeSquare := b.GetSquare(m, BEFORE)
+// GetStrategy identifies what strategy player goes for
+func (m Move) GetStrategy(b Board) Strategy {
 	afterSquare := b.GetSquare(m, AFTER)
-
-	// check emptiness
-	if beforeSquare.isEmpty || afterSquare.isEmpty {
-		return false
+	if afterSquare.isEmpty {
+		return NORMAL
 	}
-
-	// check team difference
-	if beforeSquare.team == afterSquare.team {
-		return false
-	}
-
-	return true
+	return CAPTURE
 }
 
-// IsMoveValid checks whether the move is valid, given board and whose turn it is
-func (m Move) IsMoveValid(b Board, turn Team) bool {
-	// handle empty square on the before part of the move
+// IsValid checks whether the move is valid, given board and whose turn it is
+func (m Move) IsValid(b Board, turn Team) bool {
+	// handle empty square on origin
 	beforeSquare := b.GetSquare(m, BEFORE)
 	if beforeSquare.isEmpty {
 		fmt.Println("empty origin")
@@ -219,28 +240,400 @@ func (m Move) IsMoveValid(b Board, turn Team) bool {
 		return false
 	}
 
+	// handle when player's destination is same color
 	afterSquare := b.GetSquare(m, AFTER)
-	if !m.IsCapture(b) {
-		fmt.Println("no capture case")
-		if !afterSquare.isEmpty {
-			fmt.Println("non empty destination")
-			return false
-		}
+	if afterSquare.team == turn {
+		fmt.Printf("destination is same color")
+		return false
+	}
 
-		destination := m.GetLocation(AFTER)
-		possibleMoves := beforeSquare.piece.GetPossibleMoves(m.GetLocation(BEFORE))
-		// check if destination is in possible moves
-		foundDestination := false
-		for _, move := range possibleMoves {
-			if destination.row == move.row && destination.col == move.col {
-				foundDestination = true
+	originPiece := beforeSquare.piece
+	strategy := m.GetStrategy(b)
+	if originPiece == ROOK {
+		return m.IsRookMoveValid(b, strategy)
+	} else if originPiece == KNIGHT {
+		return m.IsKnightMoveValid(b, strategy)
+	} else if originPiece == BISHOP {
+		return m.IsBishopMoveValid(b, strategy)
+	} else if originPiece == QUEEN {
+		return m.IsQueenMoveValid(b, strategy)
+	} else if originPiece == KING {
+		return m.IsKingMoveValid(b, strategy)
+	} else if originPiece == PAWN {
+		return m.IsPawnMoveValid(b, strategy)
+	}
+
+	return false
+}
+
+// IsRookMoveValid returns whether given move, with Rook as origin piece, is valid
+func (m Move) IsRookMoveValid(b Board, strategy Strategy) bool {
+	originLocation := m.GetLocation(BEFORE)
+	destinationLocation := m.GetLocation(AFTER)
+
+	// top
+	newRow := originLocation.row - 1
+	for IsLocationValid(newRow, originLocation.col) {
+		if strategy == NORMAL {
+			if !b.ParseSquare(newRow, originLocation.col).isEmpty {
+				// path is not clear
+				break
 			}
 		}
-		if !foundDestination {
-			fmt.Println("move not found in possible moves")
-			return false
+		if destinationLocation.col == originLocation.col && newRow == destinationLocation.row {
+			if strategy == NORMAL {
+				return true
+			}
+		}
+		newRow--
+	}
+
+	// bottom
+	newRow = originLocation.row + 1
+	for IsLocationValid(newRow, originLocation.col) {
+		if strategy == NORMAL {
+			if !b.ParseSquare(newRow, originLocation.col).isEmpty {
+				// path is not clear
+				break
+			}
+		}
+		if destinationLocation.col == originLocation.col && newRow == destinationLocation.row {
+			if strategy == NORMAL {
+				return true
+			}
+		}
+		newRow++
+	}
+
+	// left
+	newCol := originLocation.col - 1
+	for IsLocationValid(originLocation.row, newCol) {
+		if strategy == NORMAL {
+			if !b.ParseSquare(originLocation.row, newCol).isEmpty {
+				// path is not clear
+				break
+			}
+		}
+		if originLocation.row == destinationLocation.row && newCol == destinationLocation.col {
+			if strategy == NORMAL {
+				return true
+			}
+		}
+		newCol--
+	}
+
+	// right
+	newCol = originLocation.col + 1
+	for IsLocationValid(originLocation.row, newCol) {
+		if strategy == NORMAL {
+			if !b.ParseSquare(originLocation.row, newCol).isEmpty {
+				// path is not clear
+				break
+			}
+		}
+		if originLocation.row == destinationLocation.row && newCol == destinationLocation.col {
+			if strategy == NORMAL {
+				return true
+			}
+		}
+		newCol++
+	}
+
+	return false
+}
+
+// IsKnightMoveValid returns whether given move, with Knight as origin piece, is valid
+func (m Move) IsKnightMoveValid(b Board, strategy Strategy) bool {
+	// searching for Knight moves in the fashion of
+	// two hops forward, then one left, or one right
+	originLocation := m.GetLocation(BEFORE)
+	destinationLocation := m.GetLocation(AFTER)
+
+	// handle top hand
+	newRow := originLocation.row - 2
+	newCol := originLocation.col - 1 // left side
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+	newCol = originLocation.col + 1 // right side
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
 		}
 	}
 
-	return true
+	// handle right hand
+	newCol = originLocation.col + 2
+	newRow = originLocation.row - 1 // top side
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+	newRow = originLocation.row + 1 // bottom side
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+
+	// handle bottom hand
+	newRow = originLocation.row + 2
+	newCol = originLocation.col - 1 // left side
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+	newCol = originLocation.col + 1 // right side
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+
+	// handle left hand
+	newCol = originLocation.col - 2
+	newRow = originLocation.row - 1 // top side
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+	newRow = originLocation.row + 1 // bottom side
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+
+	return false
+}
+
+// IsBishopMoveValid returns whether given move, with Bishop as origin piece, is valid
+func (m Move) IsBishopMoveValid(b Board, strategy Strategy) bool {
+	originLocation := m.GetLocation(BEFORE)
+	destinationLocation := m.GetLocation(AFTER)
+
+	// go top-right
+	newRow := originLocation.row - 1
+	newCol := originLocation.col + 1
+	for IsLocationValid(newRow, newCol) {
+		if strategy == NORMAL {
+			if !b.ParseSquare(newRow, newCol).isEmpty {
+				// path is not clear
+				break
+			}
+		}
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			// reached destination
+			if strategy == NORMAL {
+				return true
+			}
+		}
+		newRow = newRow - 1
+		newCol = newCol + 1
+	}
+
+	// go bottom-right
+	newRow = originLocation.row + 1
+	newCol = originLocation.col + 1
+	for IsLocationValid(newRow, newCol) {
+		if strategy == NORMAL {
+			if !b.ParseSquare(newRow, newCol).isEmpty {
+				// path is not clear
+				break
+			}
+		}
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			// reached destination
+			if strategy == NORMAL {
+				return true
+			}
+		}
+		newRow = newRow + 1
+		newCol = newCol + 1
+	}
+
+	// go bottom-left
+	newRow = originLocation.row + 1
+	newCol = originLocation.col - 1
+	for IsLocationValid(newRow, newCol) {
+		if strategy == NORMAL {
+			if !b.ParseSquare(newRow, newCol).isEmpty {
+				// path is not clear
+				break
+			}
+		}
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			// reached destination
+			if strategy == NORMAL {
+				return true
+			}
+		}
+		newRow = newRow + 1
+		newCol = newCol - 1
+	}
+
+	// go top-left
+	newRow = originLocation.row - 1
+	newCol = originLocation.col - 1
+	for IsLocationValid(newRow, newCol) {
+		if strategy == NORMAL {
+			if !b.ParseSquare(newRow, newCol).isEmpty {
+				// path is not clear
+				break
+			}
+		}
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			// reached destination
+			if strategy == NORMAL {
+				return true
+			}
+		}
+		newRow = newRow - 1
+		newCol = newCol - 1
+	}
+
+	return false
+}
+
+// IsQueenMoveValid returns whether given move, with Queen as origin piece, is valid
+func (m Move) IsQueenMoveValid(b Board, strategy Strategy) bool {
+	rookMovesValidity := m.IsRookMoveValid(b, strategy)
+	bishopMovesValidity := m.IsBishopMoveValid(b, strategy)
+
+	return rookMovesValidity || bishopMovesValidity
+}
+
+// IsKingMoveValid returns whether given move, with King as origin piece, is valid
+func (m Move) IsKingMoveValid(b Board, strategy Strategy) bool {
+	originLocation := m.GetLocation(BEFORE)
+	destinationLocation := m.GetLocation(AFTER)
+
+	// vertical top
+	newRow := originLocation.row - 1
+	newCol := originLocation.col
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+
+	// diagonal top-right
+	newRow = originLocation.row - 1
+	newCol = originLocation.col + 1
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+
+	// horizontal right
+	newRow = originLocation.row
+	newCol = originLocation.col + 1
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+
+	// diagonal bottom-right
+	newRow = originLocation.row + 1
+	newCol = originLocation.col + 1
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+
+	// vertical bottom
+	newRow = originLocation.row + 1
+	newCol = originLocation.col
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+
+	// diagonal bottom-left
+	newRow = originLocation.row + 1
+	newCol = originLocation.col - 1
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+
+	// horizontal left
+	newRow = originLocation.row
+	newCol = originLocation.col - 1
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+
+	// diagonal top-left
+	newRow = originLocation.row - 1
+	newCol = originLocation.col - 1
+	if strategy == NORMAL {
+		if newRow == destinationLocation.row && newCol == destinationLocation.col {
+			return true
+		}
+	}
+
+	return false
+}
+
+// IsPawnMoveValid returns whether given move, with Pawn as origin piece, is valid
+func (m Move) IsPawnMoveValid(b Board, strategy Strategy) bool {
+	originLocation := m.GetLocation(BEFORE)
+	destinationLocation := m.GetLocation(AFTER)
+
+	// find out if pawn is on first move
+	firstMove := false
+	if (originLocation.row == 1 && m.team == BLACK) || (originLocation.row == 6 && m.team == WHITE) {
+		firstMove = true
+	}
+
+	// if white / down side
+	if m.team == WHITE {
+		newRow := originLocation.row - 1
+		if strategy == NORMAL {
+			if newRow == destinationLocation.row && originLocation.col == destinationLocation.col {
+				return true
+			}
+		}
+		if firstMove {
+			newRow--
+			if strategy == NORMAL {
+				if newRow == destinationLocation.row && originLocation.col == destinationLocation.col {
+					return true
+				}
+			}
+		}
+	}
+
+	// if black / up side
+	if m.team == BLACK {
+		newRow := originLocation.row + 1
+		if strategy == NORMAL {
+			if newRow == destinationLocation.row && originLocation.col == destinationLocation.col {
+				return true
+			}
+		}
+		if firstMove {
+			newRow++
+			if strategy == NORMAL {
+				if newRow == destinationLocation.row && originLocation.col == destinationLocation.col {
+					return true
+				}
+			}
+		}
+	}
+
+	return false
 }
