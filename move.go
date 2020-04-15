@@ -221,11 +221,12 @@ func IsNumberValid(number rune) bool {
 
 // GetStrategy identifies what strategy player goes for
 func (m Move) GetStrategy(b Board) Strategy {
+	beforeSquare := b.GetSquare(m, BEFORE)
 	afterSquare := b.GetSquare(m, AFTER)
-	if afterSquare.isEmpty {
-		return NORMAL
+	if afterSquare.team != beforeSquare.team {
+		return CAPTURE
 	}
-	return CAPTURE
+	return NORMAL
 }
 
 // IsValid checks whether the move is valid, given board and whose turn it is
