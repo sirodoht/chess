@@ -223,7 +223,7 @@ func IsNumberValid(number rune) bool {
 func (m Move) GetStrategy(b Board) Strategy {
 	beforeSquare := b.GetSquare(m, BEFORE)
 	afterSquare := b.GetSquare(m, AFTER)
-	if afterSquare.team != beforeSquare.team {
+	if beforeSquare.team != afterSquare.team && !afterSquare.isEmpty {
 		return CAPTURE
 	}
 	return NORMAL
