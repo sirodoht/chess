@@ -61,7 +61,10 @@ const (
 
 // NewMove validates and returns a new Move struct out of a command string
 func NewMove(b Board, team Team, command string) (Move, error) {
-	// check command validity
+	if len(command) == 4 {
+		command = string(command[0]) + string(command[1]) + " " + string(command[2]) + string(command[3])
+	}
+
 	if !IsCommandValid(command) {
 		return Move{}, errors.New("invalid command")
 	}
