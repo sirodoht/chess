@@ -632,6 +632,15 @@ func (m Move) IsPawnMoveValid(b Board) bool {
 			if newRow == destinationLocation.row && originLocation.col == destinationLocation.col {
 				return true
 			}
+		} else if m.strategy == CAPTURE {
+			newColLeft := originLocation.col - 1
+			if newRow == destinationLocation.row && newColLeft == destinationLocation.col {
+				return true
+			}
+			newColRight := originLocation.col + 1
+			if newRow == destinationLocation.row && newColRight == destinationLocation.col {
+				return true
+			}
 		}
 		if firstMove {
 			newRow--
