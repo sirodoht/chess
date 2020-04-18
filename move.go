@@ -322,13 +322,17 @@ func GetNotationFromLocation(location Location) string {
 }
 
 // IsInvalidAsChecked returns true if current team King is threatened by enemy's piece
+// To find the answer, it scans all board squares, creates moves with each
+// enemy piece as origin and current team King as destination, and then checks
+// if the move is valid. If so, then that means it's a capture move, which means
+// current team's King is in check position.
 func (m Move) IsInvalidAsChecked(b Board) bool {
 	kingLocation := b.FindKing(m.team)
 	kingLocationAsNotation := GetNotationFromLocation(kingLocation)
 	for i := 0; i < 8; i++ {
 		for j := 0; j < 8; j++ {
-			square := b.ParseSquare(i, j)
-			if square.isEmpty {
+			originEnemySquare := b.ParseSquare(i, j)
+			if originEnemySquare.isEmpty {
 				continue
 			}
 			currentLocation := Location{
@@ -336,15 +340,62 @@ func (m Move) IsInvalidAsChecked(b Board) bool {
 				col: j,
 			}
 			currentLocationAsNotation := GetNotationFromLocation(currentLocation)
-			command := currentLocationAsNotation + kingLocationAsNotation
-			_, isValid, _ := NewMove(b, m.team, command)
-			if isValid {
-				return false
+			command := currentLocationAsNotation + " " + kingLocationAsNotation
+
+			// parse command
+			words := strings.Fields(command)
+			before := words[0]
+			after := words[1]
+
+			// build move to test if it is a check move
+			testCheckMove := Move{}
+			testCheckMove.team = m.team
+			testCheckMove.beforeLetter = []rune(before)[0]
+			testCheckMove.afterLetter = []rune(after)[0]
+			beforeNumber, err := strconv.Atoi(string([]rune(before)[1]))
+			if err != nil {
+				panic(err)
 			}
+			testCheckMove.beforeNumber = beforeNumber
+			afterNumber, err := strconv.Atoi(string([]rune(after)[1]))
+			if err != nil {
+				panic(err)
+			}
+			testCheckMove.afterNumber = afterNumber
+			testCheckMove.strategy = GetStrategy(m, b)
+
+			// handle when player plays enemy's pieces
+			if originEnemySquare.team == m.team {
+				continue
+			}
+
+			piece := originEnemySquare.piece
+			validity := false
+			if piece == ROOK {
+				validity = testCheckMove.IsRookMoveValid(b)
+			} else if piece == KNIGHT {
+				validity = testCheckMove.IsKnightMoveValid(b)
+			} else if piece == BISHOP {
+				validity = testCheckMove.IsBishopMoveValid(b)
+			} else if piece == QUEEN {
+				validity = testCheckMove.IsQueenMoveValid(b)
+			} else if piece == KING {
+				validity = testCheckMove.IsKingMoveValid(b)
+			} else if piece == PAWN {
+				validity = testCheckMove.IsPawnMoveValid(b)
+			}
+
+			// if move is valid, then it means King is in check position
+			// which means that we should return true
+			// if not, then we should continue searching
+			if validity {
+				return true
+			}
+
 		}
 	}
 
-	return true
+	return false
 }
 
 // IsRookMoveValid returns whether given move, with Rook as origin piece, is valid
