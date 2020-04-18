@@ -176,3 +176,19 @@ func (b Board) ParseSquare(row int, col int) Square {
 
 	return square
 }
+
+// FindKing returns the square of the King on current board
+func (b Board) FindKing(team Team) Location {
+	for i := 0; i < 8; i++ {
+		for j := 0; j < 8; j++ {
+			square := b.ParseSquare(i, j)
+			if square.team == team && square.piece == KING {
+				return Location{
+					row: i,
+					col: j,
+				}
+			}
+		}
+	}
+	return Location{}
+}
