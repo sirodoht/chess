@@ -822,3 +822,24 @@ func TestPawnCaptureAsBlack(t *testing.T) {
 		t.Error("Pawn capture strategy was not identified")
 	}
 }
+
+func TestMoveInvalidAsChecked(t *testing.T) {
+	board := Board{
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "○ G", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "● R", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "● G", "   ", "   ", "   "},
+	}
+
+	// create move
+	turn := WHITE
+	command := "e2 f2"
+	_, isValid, _ := NewMove(board, turn, command)
+	if isValid {
+		t.Error("King move is valid when it should not have been (as checked)")
+	}
+}
