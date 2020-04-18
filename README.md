@@ -50,8 +50,8 @@ $ go test
 
 ## Implementation
 
-* [x] Pieces moves validation
-* [x] Capturing validation
+* [x] Pieces movement
+* [x] Capturing
 * [ ] Check
 * [ ] Checkmate
 * [ ] Promotion
