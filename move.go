@@ -92,11 +92,12 @@ func NewMove(b Board, team Team, command string) (Move, bool, string) {
 	}
 	m.afterNumber = afterNumber
 
-	m.strategy = m.GetStrategy(b)
+	m.strategy = GetStrategy(m, b)
 
 	// check move validity
-	if !m.IsValid(b, team) {
-		return Move{}, false, "MOVE: invalid."
+	validityMessage := m.IsValid(b, team)
+	if len(validityMessage) > 0 {
+		return Move{}, false, "MOVE: " + validityMessage
 	}
 
 	// build success message
@@ -104,12 +105,14 @@ func NewMove(b Board, team Team, command string) (Move, bool, string) {
 	originSquare := b.GetSquare(m, BEFORE)
 	originPieceName := GetPieceName(originSquare.piece, VERBOSE)
 	originTeamName := GetTeamName(m.team, VERBOSE)
+	destinationSquare := b.GetSquare(m, AFTER)
+	capturedPieceName := GetPieceName(destinationSquare.piece, VERBOSE)
+	destinationTeamName := GetTeamName(m.GetEnemy(), SYMBOL)
 	msg := fmt.Sprintf("MOVE: %s %s moved to %s", originTeamName, originPieceName, destinationLocation)
 	if m.strategy == CAPTURE {
-		destinationSquare := b.GetSquare(m, AFTER)
-		capturedPieceName := GetPieceName(destinationSquare.piece, VERBOSE)
-		destinationTeamName := GetTeamName(m.GetEnemy(), SYMBOL)
 		msg = fmt.Sprintf("CAPTURE: %s %s captured %s %s at %s", originTeamName, originPieceName, destinationTeamName, capturedPieceName, destinationLocation)
+	} else if m.strategy == CHECK {
+		msg = fmt.Sprintf("CHECK: %s is in check", destinationTeamName)
 	}
 
 	return m, true, msg
@@ -244,7 +247,7 @@ func IsNumberValid(number rune) bool {
 }
 
 // GetStrategy identifies what strategy player goes for
-func (m Move) GetStrategy(b Board) Strategy {
+func GetStrategy(m Move, b Board) Strategy {
 	beforeSquare := b.GetSquare(m, BEFORE)
 	afterSquare := b.GetSquare(m, AFTER)
 	if beforeSquare.team != afterSquare.team && !afterSquare.isEmpty {
@@ -254,43 +257,94 @@ func (m Move) GetStrategy(b Board) Strategy {
 }
 
 // IsValid checks whether the move is valid, given board and whose turn it is
-func (m Move) IsValid(b Board, turn Team) bool {
+func (m Move) IsValid(b Board, turn Team) string {
+
 	// handle empty square on origin
 	beforeSquare := b.GetSquare(m, BEFORE)
 	if beforeSquare.isEmpty {
-		fmt.Println("empty origin")
-		return false
+		return "empty origin"
 	}
 
 	// handle when player plays enemy's pieces
 	if beforeSquare.team != turn {
-		fmt.Printf("wrong turn")
-		return false
+		return "wrong turn"
 	}
 
 	// handle when player's destination is same color
 	afterSquare := b.GetSquare(m, AFTER)
 	if afterSquare.team == turn {
-		fmt.Printf("destination is same color")
-		return false
+		return "destination is same color"
 	}
 
 	originPiece := beforeSquare.piece
+	validity := false
 	if originPiece == ROOK {
-		return m.IsRookMoveValid(b)
+		validity = m.IsRookMoveValid(b)
 	} else if originPiece == KNIGHT {
-		return m.IsKnightMoveValid(b)
+		validity = m.IsKnightMoveValid(b)
 	} else if originPiece == BISHOP {
-		return m.IsBishopMoveValid(b)
+		validity = m.IsBishopMoveValid(b)
 	} else if originPiece == QUEEN {
-		return m.IsQueenMoveValid(b)
+		validity = m.IsQueenMoveValid(b)
 	} else if originPiece == KING {
-		return m.IsKingMoveValid(b)
+		validity = m.IsKingMoveValid(b)
 	} else if originPiece == PAWN {
-		return m.IsPawnMoveValid(b)
+		validity = m.IsPawnMoveValid(b)
 	}
 
-	return false
+	if validity == false {
+		return "invalid move"
+	}
+
+	// check check status
+	if m.IsInvalidAsChecked(b) {
+		return "invalid as checked"
+	}
+
+	return ""
+}
+
+// GetNotationFromLocation returns string of notation, given Location
+func GetNotationFromLocation(location Location) string {
+	notations := map[int]rune{
+		0: 'a',
+		1: 'b',
+		2: 'c',
+		3: 'd',
+		4: 'e',
+		5: 'f',
+		6: 'g',
+		7: 'h',
+	}
+	notationRow := notations[location.row]
+	notationCol := location.col + 1
+	return string(notationRow) + strconv.Itoa(notationCol)
+}
+
+// IsInvalidAsChecked returns true if current team King is threatened by enemy's piece
+func (m Move) IsInvalidAsChecked(b Board) bool {
+	kingLocation := b.FindKing(m.team)
+	kingLocationAsNotation := GetNotationFromLocation(kingLocation)
+	for i := 0; i < 8; i++ {
+		for j := 0; j < 8; j++ {
+			square := b.ParseSquare(i, j)
+			if square.isEmpty {
+				continue
+			}
+			currentLocation := Location{
+				row: i,
+				col: j,
+			}
+			currentLocationAsNotation := GetNotationFromLocation(currentLocation)
+			command := currentLocationAsNotation + kingLocationAsNotation
+			_, isValid, _ := NewMove(b, m.team, command)
+			if isValid {
+				return false
+			}
+		}
+	}
+
+	return true
 }
 
 // IsRookMoveValid returns whether given move, with Rook as origin piece, is valid
