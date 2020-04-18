@@ -77,7 +77,6 @@ func NewMove(b Board, team Team, command string) (Move, bool, string) {
 
 	m := Move{}
 	m.team = team
-	m.strategy = m.GetStrategy(b)
 	m.beforeLetter = []rune(before)[0]
 	m.afterLetter = []rune(after)[0]
 
@@ -92,6 +91,8 @@ func NewMove(b Board, team Team, command string) (Move, bool, string) {
 		panic(err)
 	}
 	m.afterNumber = afterNumber
+
+	m.strategy = m.GetStrategy(b)
 
 	// check move validity
 	if !m.IsValid(b, team) {
