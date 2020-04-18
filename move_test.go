@@ -84,10 +84,10 @@ func TestRookCaptureTop(t *testing.T) {
 	command := "h8 h2"
 	move, isValid, _ := NewMove(board, turn, command)
 	if !isValid {
-		t.Error("invalid pawn capture move")
+		t.Error("invalid Rook capture move")
 	}
 	if move.strategy != CAPTURE {
-		t.Error("capture strategy was not identified")
+		t.Error("Rook capture strategy was not identified")
 	}
 }
 
@@ -108,10 +108,10 @@ func TestRookCaptureLeft(t *testing.T) {
 	command := "h3 a3"
 	move, isValid, _ := NewMove(board, turn, command)
 	if !isValid {
-		t.Error("invalid pawn capture move")
+		t.Error("invalid Rook capture move")
 	}
 	if move.strategy != CAPTURE {
-		t.Error("capture strategy was not identified")
+		t.Error("Rook capture strategy was not identified")
 	}
 }
 
@@ -132,10 +132,10 @@ func TestRookCaptureBottom(t *testing.T) {
 	command := "a1 a7"
 	move, isValid, _ := NewMove(board, turn, command)
 	if !isValid {
-		t.Error("invalid pawn capture move")
+		t.Error("invalid Rook capture move")
 	}
 	if move.strategy != CAPTURE {
-		t.Error("capture strategy was not identified")
+		t.Error("Rook capture strategy was not identified")
 	}
 }
 
@@ -156,10 +156,10 @@ func TestRookCaptureRight(t *testing.T) {
 	command := "a4 g4"
 	move, isValid, _ := NewMove(board, turn, command)
 	if !isValid {
-		t.Error("invalid pawn capture move")
+		t.Error("invalid Rook capture move")
 	}
 	if move.strategy != CAPTURE {
-		t.Error("capture strategy was not identified")
+		t.Error("Rook capture strategy was not identified")
 	}
 }
 
@@ -180,7 +180,7 @@ func TestRookCaptureBlocked(t *testing.T) {
 	command := "h1 h8"
 	_, isValid, _ := NewMove(board, turn, command)
 	if isValid {
-		t.Error("pawn capture move is valid when it should not have been")
+		t.Error("Rook capture move is valid when it should not have been")
 	}
 }
 
@@ -223,6 +223,102 @@ func TestKnightMoveInvalid(t *testing.T) {
 	_, isValid, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("Knight move is valid")
+	}
+}
+
+func TestKnightCaptureTopRight(t *testing.T) {
+	board := Board{
+		{"● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},
+		{"● P", "● P", "● P", "● P", "● P", "● P", "   ", "● P"},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "● P", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "○ K", "   ", "   "},
+		{"○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P"},
+		{"○ R", "○ K", "○ B", "○ Q", "○ G", "○ B", "   ", "○ R"},
+	}
+
+	// create move
+	turn := WHITE
+	command := "f6 g4"
+	move, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
+		t.Error("invalid Knight capture move")
+	}
+	if move.strategy != CAPTURE {
+		t.Error("Knight capture strategy was not identified")
+	}
+}
+
+func TestKnightCaptureTopLeft(t *testing.T) {
+	board := Board{
+		{"● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},
+		{"● P", "● P", "● P", "   ", "● P", "● P", "   ", "● P"},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "● P", "   ", "● P", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "○ K", "   ", "   "},
+		{"○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P"},
+		{"○ R", "○ K", "○ B", "○ Q", "○ G", "○ B", "   ", "○ R"},
+	}
+
+	// create move
+	turn := WHITE
+	command := "f6 e4"
+	move, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
+		t.Error("invalid Knight capture move")
+	}
+	if move.strategy != CAPTURE {
+		t.Error("Knight capture strategy was not identified")
+	}
+}
+
+func TestKnightCaptureLeftTop(t *testing.T) {
+	board := Board{
+		{"● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},
+		{"● P", "● P", "● P", "   ", "● P", "● P", "   ", "● P"},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "● P", "   "},
+		{"   ", "   ", "   ", "● P", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "○ K", "   ", "   "},
+		{"○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P"},
+		{"○ R", "○ K", "○ B", "○ Q", "○ G", "○ B", "   ", "○ R"},
+	}
+
+	// create move
+	turn := WHITE
+	command := "f6 d5"
+	move, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
+		t.Error("invalid Knight capture move")
+	}
+	if move.strategy != CAPTURE {
+		t.Error("Knight capture strategy was not identified")
+	}
+}
+
+func TestKnightCaptureBottomLeft(t *testing.T) {
+	board := Board{
+		{"● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},
+		{"● P", "● P", "● P", "   ", "● P", "   ", "   ", "● P"},
+		{"   ", "   ", "   ", "   ", "   ", "○ P", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "● P", "   "},
+		{"   ", "   ", "   ", "● P", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "○ K", "   ", "   "},
+		{"○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "   ", "○ P"},
+		{"○ R", "○ K", "○ B", "○ Q", "○ G", "○ B", "   ", "○ R"},
+	}
+
+	// create move
+	turn := BLACK
+	command := "g1 f3"
+	move, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
+		t.Error("invalid Knight capture move")
+	}
+	if move.strategy != CAPTURE {
+		t.Error("Knight capture strategy was not identified")
 	}
 }
 
@@ -558,10 +654,10 @@ func TestPawnCaptureAsWhite(t *testing.T) {
 	command := "d5 e4"
 	move, isValid, _ := NewMove(board, turn, command)
 	if !isValid {
-		t.Error("invalid pawn capture move")
+		t.Error("invalid Pawn capture move")
 	}
 	if move.strategy != CAPTURE {
-		t.Error("capture strategy was not identified")
+		t.Error("Pawn capture strategy was not identified")
 	}
 }
 
@@ -582,9 +678,9 @@ func TestPawnCaptureAsBlack(t *testing.T) {
 	command := "h4 g5"
 	move, isValid, _ := NewMove(board, turn, command)
 	if !isValid {
-		t.Error("invalid pawn capture move")
+		t.Error("invalid Pawn capture move")
 	}
 	if move.strategy != CAPTURE {
-		t.Error("capture strategy was not identified")
+		t.Error("Pawn capture strategy was not identified")
 	}
 }

@@ -402,13 +402,13 @@ func (m Move) IsKnightMoveValid(b Board) bool {
 	// handle top hand
 	newRow := originLocation.row - 2
 	newCol := originLocation.col - 1 // left side
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
 	}
 	newCol = originLocation.col + 1 // right side
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -417,13 +417,13 @@ func (m Move) IsKnightMoveValid(b Board) bool {
 	// handle right hand
 	newCol = originLocation.col + 2
 	newRow = originLocation.row - 1 // top side
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
 	}
 	newRow = originLocation.row + 1 // bottom side
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -432,13 +432,13 @@ func (m Move) IsKnightMoveValid(b Board) bool {
 	// handle bottom hand
 	newRow = originLocation.row + 2
 	newCol = originLocation.col - 1 // left side
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
 	}
 	newCol = originLocation.col + 1 // right side
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -447,13 +447,13 @@ func (m Move) IsKnightMoveValid(b Board) bool {
 	// handle left hand
 	newCol = originLocation.col - 2
 	newRow = originLocation.row - 1 // top side
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
 	}
 	newRow = originLocation.row + 1 // bottom side
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
