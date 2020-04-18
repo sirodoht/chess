@@ -538,6 +538,30 @@ func TestQueenMoveInvalid(t *testing.T) {
 	}
 }
 
+func TestQueenCaptureDiagonal(t *testing.T) {
+	board := Board{
+		{"● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},
+		{"● P", "● P", "● P", "● P", "● P", "● P", "● P", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "● P"},
+		{"   ", "   ", "   ", "   ", "○ P", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"○ P", "○ P", "○ P", "○ P", "   ", "○ P", "○ P", "○ P"},
+		{"○ R", "○ K", "○ B", "○ Q", "○ G", "○ B", "○ K", "○ R"},
+	}
+
+	// create move
+	turn := WHITE
+	command := "d8 h4"
+	move, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
+		t.Error("invalid Queen capture move")
+	}
+	if move.strategy != CAPTURE {
+		t.Error("Queen capture strategy was not identified")
+	}
+}
+
 func TestKingMoveVertical(t *testing.T) {
 	board := Board{
 		{"● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},
@@ -619,6 +643,30 @@ func TestKingMoveInvalidDiagonal(t *testing.T) {
 	_, isValid, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("King move is valid")
+	}
+}
+
+func TestKingCaptureVertical(t *testing.T) {
+	board := Board{
+		{"● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},
+		{"● P", "● P", "● P", "● P", "   ", "● P", "● P", "● P"},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "● P", "   ", "   ", "   "},
+		{"○ P", "○ P", "○ P", "○ P", "○ G", "○ P", "○ P", "○ P"},
+		{"○ R", "○ K", "○ B", "○ Q", "   ", "○ B", "○ K", "○ R"},
+	}
+
+	// create move
+	turn := WHITE
+	command := "e7 e6"
+	move, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
+		t.Error("invalid King capture move")
+	}
+	if move.strategy != CAPTURE {
+		t.Error("King capture strategy was not identified")
 	}
 }
 

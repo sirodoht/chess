@@ -591,7 +591,7 @@ func (m Move) IsKingMoveValid(b Board) bool {
 	// vertical top
 	newRow := originLocation.row - 1
 	newCol := originLocation.col
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -600,7 +600,7 @@ func (m Move) IsKingMoveValid(b Board) bool {
 	// diagonal top-right
 	newRow = originLocation.row - 1
 	newCol = originLocation.col + 1
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -609,7 +609,7 @@ func (m Move) IsKingMoveValid(b Board) bool {
 	// horizontal right
 	newRow = originLocation.row
 	newCol = originLocation.col + 1
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -618,7 +618,7 @@ func (m Move) IsKingMoveValid(b Board) bool {
 	// diagonal bottom-right
 	newRow = originLocation.row + 1
 	newCol = originLocation.col + 1
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -627,7 +627,7 @@ func (m Move) IsKingMoveValid(b Board) bool {
 	// vertical bottom
 	newRow = originLocation.row + 1
 	newCol = originLocation.col
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -636,7 +636,7 @@ func (m Move) IsKingMoveValid(b Board) bool {
 	// diagonal bottom-left
 	newRow = originLocation.row + 1
 	newCol = originLocation.col - 1
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -645,7 +645,7 @@ func (m Move) IsKingMoveValid(b Board) bool {
 	// horizontal left
 	newRow = originLocation.row
 	newCol = originLocation.col - 1
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -654,7 +654,7 @@ func (m Move) IsKingMoveValid(b Board) bool {
 	// diagonal top-left
 	newRow = originLocation.row - 1
 	newCol = originLocation.col - 1
-	if m.strategy == NORMAL {
+	if m.strategy == NORMAL || m.strategy == CAPTURE {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
