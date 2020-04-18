@@ -302,13 +302,19 @@ func (m Move) IsRookMoveValid(b Board) bool {
 	for IsLocationValid(newRow, originLocation.col) {
 		if m.strategy == NORMAL {
 			if !b.ParseSquare(newRow, originLocation.col).isEmpty {
-				// path is not clear
+				// path is not clear, break
 				break
 			}
-		}
-		if destinationLocation.col == originLocation.col && newRow == destinationLocation.row {
-			if m.strategy == NORMAL {
+			if originLocation.col == destinationLocation.col && newRow == destinationLocation.row {
 				return true
+			}
+		} else if m.strategy == CAPTURE {
+			if !b.ParseSquare(newRow, originLocation.col).isEmpty {
+				// path is not clear, either found or break
+				if originLocation.col == destinationLocation.col && newRow == destinationLocation.row {
+					return true
+				}
+				break
 			}
 		}
 		newRow--
@@ -319,13 +325,19 @@ func (m Move) IsRookMoveValid(b Board) bool {
 	for IsLocationValid(newRow, originLocation.col) {
 		if m.strategy == NORMAL {
 			if !b.ParseSquare(newRow, originLocation.col).isEmpty {
-				// path is not clear
+				// path is not clear, break
 				break
 			}
-		}
-		if destinationLocation.col == originLocation.col && newRow == destinationLocation.row {
-			if m.strategy == NORMAL {
+			if originLocation.col == destinationLocation.col && newRow == destinationLocation.row {
 				return true
+			}
+		} else if m.strategy == CAPTURE {
+			if !b.ParseSquare(newRow, originLocation.col).isEmpty {
+				// path is not clear, either found or break
+				if originLocation.col == destinationLocation.col && newRow == destinationLocation.row {
+					return true
+				}
+				break
 			}
 		}
 		newRow++
@@ -336,13 +348,19 @@ func (m Move) IsRookMoveValid(b Board) bool {
 	for IsLocationValid(originLocation.row, newCol) {
 		if m.strategy == NORMAL {
 			if !b.ParseSquare(originLocation.row, newCol).isEmpty {
-				// path is not clear
+				// path is not clear, break
 				break
 			}
-		}
-		if originLocation.row == destinationLocation.row && newCol == destinationLocation.col {
-			if m.strategy == NORMAL {
+			if originLocation.row == destinationLocation.row && newCol == destinationLocation.col {
 				return true
+			}
+		} else if m.strategy == CAPTURE {
+			if !b.ParseSquare(originLocation.row, newCol).isEmpty {
+				// path is not clear, either found or break
+				if originLocation.row == destinationLocation.row && newCol == destinationLocation.col {
+					return true
+				}
+				break
 			}
 		}
 		newCol--
@@ -353,13 +371,19 @@ func (m Move) IsRookMoveValid(b Board) bool {
 	for IsLocationValid(originLocation.row, newCol) {
 		if m.strategy == NORMAL {
 			if !b.ParseSquare(originLocation.row, newCol).isEmpty {
-				// path is not clear
+				// path is not clear, break
 				break
 			}
-		}
-		if originLocation.row == destinationLocation.row && newCol == destinationLocation.col {
-			if m.strategy == NORMAL {
+			if originLocation.row == destinationLocation.row && newCol == destinationLocation.col {
 				return true
+			}
+		} else if m.strategy == CAPTURE {
+			if !b.ParseSquare(originLocation.row, newCol).isEmpty {
+				// path is not clear, either found or break
+				if originLocation.row == destinationLocation.row && newCol == destinationLocation.col {
+					return true
+				}
+				break
 			}
 		}
 		newCol++
