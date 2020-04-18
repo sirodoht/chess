@@ -322,6 +322,27 @@ func TestKnightCaptureBottomLeft(t *testing.T) {
 	}
 }
 
+func TestKnightCaptureInvalid(t *testing.T) {
+	board := Board{
+		{"● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},
+		{"● P", "● P", "● P", "   ", "● P", "   ", "   ", "● P"},
+		{"   ", "   ", "   ", "   ", "   ", "● P", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "● P", "   "},
+		{"   ", "   ", "   ", "● P", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "○ K", "   ", "   "},
+		{"○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "   ", "○ P"},
+		{"○ R", "○ K", "○ B", "○ Q", "○ G", "○ B", "   ", "○ R"},
+	}
+
+	// create move
+	turn := BLACK
+	command := "g1 f3"
+	_, isValid, _ := NewMove(board, turn, command)
+	if isValid {
+		t.Error("Knight capture move is valid when it should not have")
+	}
+}
+
 func TestBishopMove(t *testing.T) {
 	board := Board{
 		{"● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},
