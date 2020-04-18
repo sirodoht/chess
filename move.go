@@ -49,9 +49,6 @@ const (
 	// PROMOTION is when pawn reaches eighth square and is promoted
 	PROMOTION
 
-	// CHECK is when player threatens enemy's King
-	CHECK
-
 	// CHECKMATE is when player checkmates enemy
 	CHECKMATE
 
@@ -111,8 +108,10 @@ func NewMove(b Board, team Team, command string) (Move, bool, string) {
 	msg := fmt.Sprintf("MOVE: %s %s moved to %s", originTeamName, originPieceName, destinationLocation)
 	if m.strategy == CAPTURE {
 		msg = fmt.Sprintf("CAPTURE: %s %s captured %s %s at %s", originTeamName, originPieceName, destinationTeamName, capturedPieceName, destinationLocation)
-	} else if m.strategy == CHECK {
-		msg = fmt.Sprintf("CHECK: %s is in check", destinationTeamName)
+	}
+
+	if IsInCheck(b, m, m.GetEnemy()) {
+		msg += fmt.Sprintf("\nCHECK: %s is in check", destinationTeamName)
 	}
 
 	return m, true, msg
@@ -258,6 +257,10 @@ func GetStrategy(m Move, b Board) Strategy {
 
 // IsValid checks whether the move is valid, given board and whose turn it is
 func (m Move) IsValid(b Board, turn Team) string {
+	// handle same origin and destination
+	if m.GetLocation(BEFORE).row == m.GetLocation(AFTER).row && m.GetLocation(BEFORE).col == m.GetLocation(AFTER).col {
+		return "origin and destination are the same"
+	}
 
 	// handle empty square on origin
 	beforeSquare := b.GetSquare(m, BEFORE)
@@ -296,8 +299,10 @@ func (m Move) IsValid(b Board, turn Team) string {
 		return "invalid move"
 	}
 
-	// check check status
-	if m.IsInvalidAsChecked(b) {
+	// check if ally player is in check
+	fmt.Printf("team making the move: %s\n", GetTeamName(m.team, VERBOSE))
+	if IsInCheck(b, m, m.team) {
+		// if m.IsInvalidAsChecked(b) {
 		return "invalid as checked"
 	}
 
@@ -323,33 +328,46 @@ func GetNotationFromLocation(location Location) string {
 	return string(notationCol) + strconv.Itoa(notationRow)
 }
 
-// IsInvalidAsChecked returns true if current team King is threatened by enemy's piece
+// IsInCheck returns true if possiblyCheckedTeam is in check, after given move has been executed
 // To find the answer, it scans all board squares, creates moves with each
 // enemy piece as origin and current team King as destination, and then checks
 // if the move is valid. If so, then that means it's a capture move, which means
 // current team's King is in check position.
-func (m Move) IsInvalidAsChecked(b Board) bool {
-	var potentialBoard Board
-	potentialBoard.LoadData(b)
-	potentialBoard.Execute(m)
+func IsInCheck(b Board, m Move, possiblyCheckedTeam Team) bool {
+	var newBoard Board
+	newBoard.LoadData(b)
+	newBoard.Execute(m)
 
-	kingLocation := potentialBoard.FindKing(m.team)
-	kingLocationAsNotation := GetNotationFromLocation(kingLocation)
+	// find attacker team
+	attackerTeam := WHITE
+	if possiblyCheckedTeam == WHITE {
+		attackerTeam = BLACK
+	}
+	possiblyCheckedKingLocation := newBoard.FindKing(possiblyCheckedTeam)
+	possiblyCheckedKingLocationAsNotation := GetNotationFromLocation(possiblyCheckedKingLocation)
 	for i := 0; i < 8; i++ {
 		for j := 0; j < 8; j++ {
-			originEnemySquare := potentialBoard.ParseSquare(i, j)
-			if originEnemySquare.isEmpty {
+			attackerOriginSquare := newBoard.ParseSquare(i, j)
+
+			// omit empty origin squares
+			if attackerOriginSquare.isEmpty {
 				continue
 			}
+
+			// omit moves with origin the possibly checked team
+			if attackerOriginSquare.team != attackerTeam {
+				continue
+			}
+
 			currentLocation := Location{
 				row: i,
 				col: j,
 			}
-			if currentLocation.row == kingLocation.row && currentLocation.col == kingLocation.col {
+			if currentLocation.row == possiblyCheckedKingLocation.row && currentLocation.col == possiblyCheckedKingLocation.col {
 				continue
 			}
 			currentLocationAsNotation := GetNotationFromLocation(currentLocation)
-			command := currentLocationAsNotation + " " + kingLocationAsNotation
+			command := currentLocationAsNotation + " " + possiblyCheckedKingLocationAsNotation
 
 			// parse command
 			words := strings.Fields(command)
@@ -358,7 +376,7 @@ func (m Move) IsInvalidAsChecked(b Board) bool {
 
 			// build move to test if it is a check move
 			testCheckMove := Move{}
-			testCheckMove.team = m.team
+			testCheckMove.team = attackerTeam
 			testCheckMove.beforeLetter = []rune(before)[0]
 			testCheckMove.afterLetter = []rune(after)[0]
 			beforeNumber, err := strconv.Atoi(string([]rune(before)[1]))
@@ -371,27 +389,23 @@ func (m Move) IsInvalidAsChecked(b Board) bool {
 				panic(err)
 			}
 			testCheckMove.afterNumber = afterNumber
-			testCheckMove.strategy = GetStrategy(m, b)
+			testCheckMove.strategy = GetStrategy(m, newBoard)
 
-			// handle when player plays enemy's pieces
-			if originEnemySquare.team == m.team {
-				continue
-			}
-
-			piece := originEnemySquare.piece
+			// validate move
+			piece := attackerOriginSquare.piece
 			validity := false
 			if piece == ROOK {
-				validity = testCheckMove.IsRookMoveValid(b)
+				validity = testCheckMove.IsRookMoveValid(newBoard)
 			} else if piece == KNIGHT {
-				validity = testCheckMove.IsKnightMoveValid(b)
+				validity = testCheckMove.IsKnightMoveValid(newBoard)
 			} else if piece == BISHOP {
-				validity = testCheckMove.IsBishopMoveValid(b)
+				validity = testCheckMove.IsBishopMoveValid(newBoard)
 			} else if piece == QUEEN {
-				validity = testCheckMove.IsQueenMoveValid(b)
+				validity = testCheckMove.IsQueenMoveValid(newBoard)
 			} else if piece == KING {
-				validity = testCheckMove.IsKingMoveValid(b)
+				validity = testCheckMove.IsKingMoveValid(newBoard)
 			} else if piece == PAWN {
-				validity = testCheckMove.IsPawnMoveValid(b)
+				validity = testCheckMove.IsPawnMoveValid(newBoard)
 			}
 
 			// if move is valid, then it means King is in check position
