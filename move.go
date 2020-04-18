@@ -67,7 +67,7 @@ func NewMove(b Board, team Team, command string) (Move, bool, string) {
 	}
 
 	if !IsCommandValid(command) {
-		return Move{}, false, "MOVE: invalid; format 'd7 d6'"
+		return Move{}, false, "MOVE: invalid; example: 'd7 d6'"
 	}
 
 	// parse command
