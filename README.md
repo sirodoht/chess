@@ -52,7 +52,7 @@ $ go test
 
 * [x] Pieces movement
 * [x] Capturing
-* [ ] Check
+* [X] Check
 * [ ] Checkmate
 * [ ] Promotion
 * [ ] Castling
