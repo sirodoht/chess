@@ -59,16 +59,13 @@ func IsLocationValid(row int, col int) bool {
 
 // Execute applies a move to the board
 // Essentially, it is the move of a piece on the board.
-func (b *Board) Execute(m Move) (string, string) {
+func (b *Board) Execute(m Move) {
 	// change piece position on the board
 	oldLocation := m.GetLocation(BEFORE)
 	newLocation := m.GetLocation(AFTER)
 	square := b.GetSquare(m, BEFORE)
 	b[newLocation.row][newLocation.col] = GetTeamName(m.team, SYMBOL) + " " + GetPieceName(square.piece, SYMBOL)
 	b[oldLocation.row][oldLocation.col] = "   "
-
-	beforeDescription := GetTeamName(m.team, VERBOSE) + " " + GetPieceName(square.piece, VERBOSE)
-	return beforeDescription, m.AsNotation(AFTER)
 }
 
 // Render prints the board in stdout

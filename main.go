@@ -28,15 +28,17 @@ func main() {
 		command = strings.TrimSpace(command)
 
 		// create move
-		move, err := NewMove(board, turn, command)
-		if err != nil {
-			fmt.Println("\nInvalid move. Please try again.")
+		move, isValid, msg := NewMove(board, turn, command)
+		if !isValid {
+			fmt.Printf("\n%s\n", msg)
 			continue
 		}
 
 		// execute move
-		pieceName, afterCommand := board.Execute(move)
-		fmt.Printf("\nMOVE: %s moved to %s\n", pieceName, afterCommand)
+		board.Execute(move)
+
+		// show status message
+		fmt.Printf("\n%s\n", msg)
 
 		// check for exit
 		if command == "exit" {

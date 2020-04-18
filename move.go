@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -11,6 +10,7 @@ import (
 // e.g. "d7 -> d6", so whatever is in d7 put it in d6
 type Move struct {
 	team         Team
+	strategy     Strategy
 	beforeLetter rune
 	beforeNumber int
 	afterLetter  rune
@@ -60,13 +60,14 @@ const (
 )
 
 // NewMove validates and returns a new Move struct out of a command string
-func NewMove(b Board, team Team, command string) (Move, error) {
+// Also returns whether Move was valid, and a possible message for user.
+func NewMove(b Board, team Team, command string) (Move, bool, string) {
 	if len(command) == 4 {
 		command = string(command[0]) + string(command[1]) + " " + string(command[2]) + string(command[3])
 	}
 
 	if !IsCommandValid(command) {
-		return Move{}, errors.New("invalid command")
+		return Move{}, false, "MOVE: invalid; format 'd7 d6'"
 	}
 
 	// parse command
@@ -92,11 +93,25 @@ func NewMove(b Board, team Team, command string) (Move, error) {
 	m.afterNumber = afterNumber
 
 	// check move validity
+	m.strategy = m.GetStrategy(b)
 	if !m.IsValid(b, team) {
-		return Move{}, errors.New("invalid move")
+		return Move{}, false, "MOVE: invalid."
 	}
 
-	return m, nil
+	// build success message
+	destinationLocation := m.AsNotation(AFTER)
+	originSquare := b.GetSquare(m, BEFORE)
+	originPieceName := GetPieceName(originSquare.piece, VERBOSE)
+	originTeamName := GetTeamName(m.team, VERBOSE)
+	msg := fmt.Sprintf("MOVE: %s %s moved to %s", originTeamName, originPieceName, destinationLocation)
+	if m.strategy == CAPTURE {
+		destinationSquare := b.GetSquare(m, AFTER)
+		capturedPieceName := GetPieceName(destinationSquare.piece, VERBOSE)
+		destinationTeamName := GetTeamName(m.GetEnemy(), SYMBOL)
+		msg = fmt.Sprintf("CAPTURE: %s %s captured %s %s at %s", originTeamName, capturedPieceName, destinationTeamName, originPieceName, destinationLocation)
+	}
+
+	return m, true, msg
 }
 
 // GetLocation returns the Location struct of either BEFORE or AFTER parts
@@ -136,6 +151,14 @@ func (m Move) AsNotation(part Part) string {
 		return string(m.beforeLetter) + strconv.Itoa(m.beforeNumber)
 	}
 	return string(m.afterLetter) + strconv.Itoa(m.afterNumber)
+}
+
+// GetEnemy return the player color not playing current move
+func (m Move) GetEnemy() Team {
+	if m.team == WHITE {
+		return BLACK
+	}
+	return WHITE
 }
 
 // IsCommandValid returns whether a command is valid
@@ -252,40 +275,39 @@ func (m Move) IsValid(b Board, turn Team) bool {
 	}
 
 	originPiece := beforeSquare.piece
-	strategy := m.GetStrategy(b)
 	if originPiece == ROOK {
-		return m.IsRookMoveValid(b, strategy)
+		return m.IsRookMoveValid(b)
 	} else if originPiece == KNIGHT {
-		return m.IsKnightMoveValid(b, strategy)
+		return m.IsKnightMoveValid(b)
 	} else if originPiece == BISHOP {
-		return m.IsBishopMoveValid(b, strategy)
+		return m.IsBishopMoveValid(b)
 	} else if originPiece == QUEEN {
-		return m.IsQueenMoveValid(b, strategy)
+		return m.IsQueenMoveValid(b)
 	} else if originPiece == KING {
-		return m.IsKingMoveValid(b, strategy)
+		return m.IsKingMoveValid(b)
 	} else if originPiece == PAWN {
-		return m.IsPawnMoveValid(b, strategy)
+		return m.IsPawnMoveValid(b)
 	}
 
 	return false
 }
 
 // IsRookMoveValid returns whether given move, with Rook as origin piece, is valid
-func (m Move) IsRookMoveValid(b Board, strategy Strategy) bool {
+func (m Move) IsRookMoveValid(b Board) bool {
 	originLocation := m.GetLocation(BEFORE)
 	destinationLocation := m.GetLocation(AFTER)
 
 	// top
 	newRow := originLocation.row - 1
 	for IsLocationValid(newRow, originLocation.col) {
-		if strategy == NORMAL {
+		if m.strategy == NORMAL {
 			if !b.ParseSquare(newRow, originLocation.col).isEmpty {
 				// path is not clear
 				break
 			}
 		}
 		if destinationLocation.col == originLocation.col && newRow == destinationLocation.row {
-			if strategy == NORMAL {
+			if m.strategy == NORMAL {
 				return true
 			}
 		}
@@ -295,14 +317,14 @@ func (m Move) IsRookMoveValid(b Board, strategy Strategy) bool {
 	// bottom
 	newRow = originLocation.row + 1
 	for IsLocationValid(newRow, originLocation.col) {
-		if strategy == NORMAL {
+		if m.strategy == NORMAL {
 			if !b.ParseSquare(newRow, originLocation.col).isEmpty {
 				// path is not clear
 				break
 			}
 		}
 		if destinationLocation.col == originLocation.col && newRow == destinationLocation.row {
-			if strategy == NORMAL {
+			if m.strategy == NORMAL {
 				return true
 			}
 		}
@@ -312,14 +334,14 @@ func (m Move) IsRookMoveValid(b Board, strategy Strategy) bool {
 	// left
 	newCol := originLocation.col - 1
 	for IsLocationValid(originLocation.row, newCol) {
-		if strategy == NORMAL {
+		if m.strategy == NORMAL {
 			if !b.ParseSquare(originLocation.row, newCol).isEmpty {
 				// path is not clear
 				break
 			}
 		}
 		if originLocation.row == destinationLocation.row && newCol == destinationLocation.col {
-			if strategy == NORMAL {
+			if m.strategy == NORMAL {
 				return true
 			}
 		}
@@ -329,14 +351,14 @@ func (m Move) IsRookMoveValid(b Board, strategy Strategy) bool {
 	// right
 	newCol = originLocation.col + 1
 	for IsLocationValid(originLocation.row, newCol) {
-		if strategy == NORMAL {
+		if m.strategy == NORMAL {
 			if !b.ParseSquare(originLocation.row, newCol).isEmpty {
 				// path is not clear
 				break
 			}
 		}
 		if originLocation.row == destinationLocation.row && newCol == destinationLocation.col {
-			if strategy == NORMAL {
+			if m.strategy == NORMAL {
 				return true
 			}
 		}
@@ -347,7 +369,7 @@ func (m Move) IsRookMoveValid(b Board, strategy Strategy) bool {
 }
 
 // IsKnightMoveValid returns whether given move, with Knight as origin piece, is valid
-func (m Move) IsKnightMoveValid(b Board, strategy Strategy) bool {
+func (m Move) IsKnightMoveValid(b Board) bool {
 	// searching for Knight moves in the fashion of
 	// two hops forward, then one left, or one right
 	originLocation := m.GetLocation(BEFORE)
@@ -356,13 +378,13 @@ func (m Move) IsKnightMoveValid(b Board, strategy Strategy) bool {
 	// handle top hand
 	newRow := originLocation.row - 2
 	newCol := originLocation.col - 1 // left side
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
 	}
 	newCol = originLocation.col + 1 // right side
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -371,13 +393,13 @@ func (m Move) IsKnightMoveValid(b Board, strategy Strategy) bool {
 	// handle right hand
 	newCol = originLocation.col + 2
 	newRow = originLocation.row - 1 // top side
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
 	}
 	newRow = originLocation.row + 1 // bottom side
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -386,13 +408,13 @@ func (m Move) IsKnightMoveValid(b Board, strategy Strategy) bool {
 	// handle bottom hand
 	newRow = originLocation.row + 2
 	newCol = originLocation.col - 1 // left side
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
 	}
 	newCol = originLocation.col + 1 // right side
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -401,13 +423,13 @@ func (m Move) IsKnightMoveValid(b Board, strategy Strategy) bool {
 	// handle left hand
 	newCol = originLocation.col - 2
 	newRow = originLocation.row - 1 // top side
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
 	}
 	newRow = originLocation.row + 1 // bottom side
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -417,7 +439,7 @@ func (m Move) IsKnightMoveValid(b Board, strategy Strategy) bool {
 }
 
 // IsBishopMoveValid returns whether given move, with Bishop as origin piece, is valid
-func (m Move) IsBishopMoveValid(b Board, strategy Strategy) bool {
+func (m Move) IsBishopMoveValid(b Board) bool {
 	originLocation := m.GetLocation(BEFORE)
 	destinationLocation := m.GetLocation(AFTER)
 
@@ -425,7 +447,7 @@ func (m Move) IsBishopMoveValid(b Board, strategy Strategy) bool {
 	newRow := originLocation.row - 1
 	newCol := originLocation.col + 1
 	for IsLocationValid(newRow, newCol) {
-		if strategy == NORMAL {
+		if m.strategy == NORMAL {
 			if !b.ParseSquare(newRow, newCol).isEmpty {
 				// path is not clear
 				break
@@ -433,7 +455,7 @@ func (m Move) IsBishopMoveValid(b Board, strategy Strategy) bool {
 		}
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			// reached destination
-			if strategy == NORMAL {
+			if m.strategy == NORMAL {
 				return true
 			}
 		}
@@ -445,7 +467,7 @@ func (m Move) IsBishopMoveValid(b Board, strategy Strategy) bool {
 	newRow = originLocation.row + 1
 	newCol = originLocation.col + 1
 	for IsLocationValid(newRow, newCol) {
-		if strategy == NORMAL {
+		if m.strategy == NORMAL {
 			if !b.ParseSquare(newRow, newCol).isEmpty {
 				// path is not clear
 				break
@@ -453,7 +475,7 @@ func (m Move) IsBishopMoveValid(b Board, strategy Strategy) bool {
 		}
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			// reached destination
-			if strategy == NORMAL {
+			if m.strategy == NORMAL {
 				return true
 			}
 		}
@@ -465,7 +487,7 @@ func (m Move) IsBishopMoveValid(b Board, strategy Strategy) bool {
 	newRow = originLocation.row + 1
 	newCol = originLocation.col - 1
 	for IsLocationValid(newRow, newCol) {
-		if strategy == NORMAL {
+		if m.strategy == NORMAL {
 			if !b.ParseSquare(newRow, newCol).isEmpty {
 				// path is not clear
 				break
@@ -473,7 +495,7 @@ func (m Move) IsBishopMoveValid(b Board, strategy Strategy) bool {
 		}
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			// reached destination
-			if strategy == NORMAL {
+			if m.strategy == NORMAL {
 				return true
 			}
 		}
@@ -485,7 +507,7 @@ func (m Move) IsBishopMoveValid(b Board, strategy Strategy) bool {
 	newRow = originLocation.row - 1
 	newCol = originLocation.col - 1
 	for IsLocationValid(newRow, newCol) {
-		if strategy == NORMAL {
+		if m.strategy == NORMAL {
 			if !b.ParseSquare(newRow, newCol).isEmpty {
 				// path is not clear
 				break
@@ -493,7 +515,7 @@ func (m Move) IsBishopMoveValid(b Board, strategy Strategy) bool {
 		}
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			// reached destination
-			if strategy == NORMAL {
+			if m.strategy == NORMAL {
 				return true
 			}
 		}
@@ -505,22 +527,22 @@ func (m Move) IsBishopMoveValid(b Board, strategy Strategy) bool {
 }
 
 // IsQueenMoveValid returns whether given move, with Queen as origin piece, is valid
-func (m Move) IsQueenMoveValid(b Board, strategy Strategy) bool {
-	rookMovesValidity := m.IsRookMoveValid(b, strategy)
-	bishopMovesValidity := m.IsBishopMoveValid(b, strategy)
+func (m Move) IsQueenMoveValid(b Board) bool {
+	rookMovesValidity := m.IsRookMoveValid(b)
+	bishopMovesValidity := m.IsBishopMoveValid(b)
 
 	return rookMovesValidity || bishopMovesValidity
 }
 
 // IsKingMoveValid returns whether given move, with King as origin piece, is valid
-func (m Move) IsKingMoveValid(b Board, strategy Strategy) bool {
+func (m Move) IsKingMoveValid(b Board) bool {
 	originLocation := m.GetLocation(BEFORE)
 	destinationLocation := m.GetLocation(AFTER)
 
 	// vertical top
 	newRow := originLocation.row - 1
 	newCol := originLocation.col
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -529,7 +551,7 @@ func (m Move) IsKingMoveValid(b Board, strategy Strategy) bool {
 	// diagonal top-right
 	newRow = originLocation.row - 1
 	newCol = originLocation.col + 1
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -538,7 +560,7 @@ func (m Move) IsKingMoveValid(b Board, strategy Strategy) bool {
 	// horizontal right
 	newRow = originLocation.row
 	newCol = originLocation.col + 1
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -547,7 +569,7 @@ func (m Move) IsKingMoveValid(b Board, strategy Strategy) bool {
 	// diagonal bottom-right
 	newRow = originLocation.row + 1
 	newCol = originLocation.col + 1
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -556,7 +578,7 @@ func (m Move) IsKingMoveValid(b Board, strategy Strategy) bool {
 	// vertical bottom
 	newRow = originLocation.row + 1
 	newCol = originLocation.col
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -565,7 +587,7 @@ func (m Move) IsKingMoveValid(b Board, strategy Strategy) bool {
 	// diagonal bottom-left
 	newRow = originLocation.row + 1
 	newCol = originLocation.col - 1
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -574,7 +596,7 @@ func (m Move) IsKingMoveValid(b Board, strategy Strategy) bool {
 	// horizontal left
 	newRow = originLocation.row
 	newCol = originLocation.col - 1
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -583,7 +605,7 @@ func (m Move) IsKingMoveValid(b Board, strategy Strategy) bool {
 	// diagonal top-left
 	newRow = originLocation.row - 1
 	newCol = originLocation.col - 1
-	if strategy == NORMAL {
+	if m.strategy == NORMAL {
 		if newRow == destinationLocation.row && newCol == destinationLocation.col {
 			return true
 		}
@@ -593,7 +615,7 @@ func (m Move) IsKingMoveValid(b Board, strategy Strategy) bool {
 }
 
 // IsPawnMoveValid returns whether given move, with Pawn as origin piece, is valid
-func (m Move) IsPawnMoveValid(b Board, strategy Strategy) bool {
+func (m Move) IsPawnMoveValid(b Board) bool {
 	originLocation := m.GetLocation(BEFORE)
 	destinationLocation := m.GetLocation(AFTER)
 
@@ -606,14 +628,14 @@ func (m Move) IsPawnMoveValid(b Board, strategy Strategy) bool {
 	// if white / down side
 	if m.team == WHITE {
 		newRow := originLocation.row - 1
-		if strategy == NORMAL {
+		if m.strategy == NORMAL {
 			if newRow == destinationLocation.row && originLocation.col == destinationLocation.col {
 				return true
 			}
 		}
 		if firstMove {
 			newRow--
-			if strategy == NORMAL {
+			if m.strategy == NORMAL {
 				if newRow == destinationLocation.row && originLocation.col == destinationLocation.col {
 					return true
 				}
@@ -624,14 +646,14 @@ func (m Move) IsPawnMoveValid(b Board, strategy Strategy) bool {
 	// if black / up side
 	if m.team == BLACK {
 		newRow := originLocation.row + 1
-		if strategy == NORMAL {
+		if m.strategy == NORMAL {
 			if newRow == destinationLocation.row && originLocation.col == destinationLocation.col {
 				return true
 			}
 		}
 		if firstMove {
 			newRow++
-			if strategy == NORMAL {
+			if m.strategy == NORMAL {
 				if newRow == destinationLocation.row && originLocation.col == destinationLocation.col {
 					return true
 				}

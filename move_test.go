@@ -19,8 +19,8 @@ func TestRookMove(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "h8 h6"
-	_, err := NewMove(board, turn, command)
-	if err != nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
 		t.Error("Rook move not valid")
 	}
 }
@@ -40,8 +40,8 @@ func TestRookMoveInvalid(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "h8 h4"
-	_, err := NewMove(board, turn, command)
-	if err == nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if isValid {
 		t.Error("Rook move is valid")
 	}
 }
@@ -61,8 +61,8 @@ func TestRookMoveInvalidDiagonal(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "h7 g6"
-	_, err := NewMove(board, turn, command)
-	if err == nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if isValid {
 		t.Error("Rook move is valid")
 	}
 }
@@ -82,8 +82,8 @@ func TestKnightMove(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "g8 h6"
-	_, err := NewMove(board, turn, command)
-	if err != nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
 		t.Error("Knight move not valid")
 	}
 }
@@ -103,8 +103,8 @@ func TestKnightMoveInvalid(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "g8 h5"
-	_, err := NewMove(board, turn, command)
-	if err == nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if isValid {
 		t.Error("Knight move is valid")
 	}
 }
@@ -124,8 +124,8 @@ func TestBishopMove(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "f8 d6"
-	_, err := NewMove(board, turn, command)
-	if err != nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
 		t.Error("Bishop move not valid")
 	}
 }
@@ -145,8 +145,8 @@ func TestBishopMoveInvalid(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "f8 d6"
-	_, err := NewMove(board, turn, command)
-	if err == nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if isValid {
 		t.Error("Bishop move is valid")
 	}
 }
@@ -166,8 +166,8 @@ func TestBishopMoveInvalidVertical(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "f8 f6"
-	_, err := NewMove(board, turn, command)
-	if err == nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if isValid {
 		t.Error("Bishop move is valid")
 	}
 }
@@ -187,8 +187,8 @@ func TestQueenMoveDiagonal(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "d8 h4"
-	_, err := NewMove(board, turn, command)
-	if err != nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
 		t.Error("Queen move not valid")
 	}
 }
@@ -208,8 +208,8 @@ func TestQueenMoveVertical(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "d8 d6"
-	_, err := NewMove(board, turn, command)
-	if err != nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
 		t.Error("Queen move not valid")
 	}
 }
@@ -229,8 +229,8 @@ func TestQueenMoveInvalid(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "f8 f6"
-	_, err := NewMove(board, turn, command)
-	if err == nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if isValid {
 		t.Error("Queen move is valid")
 	}
 }
@@ -250,8 +250,8 @@ func TestKingMoveVertical(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e8 e7"
-	_, err := NewMove(board, turn, command)
-	if err != nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
 		t.Error("King move not valid")
 	}
 }
@@ -271,8 +271,8 @@ func TestKingMoveDiagonal(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e7 d6"
-	_, err := NewMove(board, turn, command)
-	if err != nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
 		t.Error("King move not valid")
 	}
 }
@@ -292,8 +292,8 @@ func TestKingMoveInvalidVertical(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e8 e6"
-	_, err := NewMove(board, turn, command)
-	if err == nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if isValid {
 		t.Error("King move is valid")
 	}
 }
@@ -313,8 +313,8 @@ func TestKingMoveInvalidDiagonal(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e7 c5"
-	_, err := NewMove(board, turn, command)
-	if err == nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if isValid {
 		t.Error("King move is valid")
 	}
 }
@@ -334,8 +334,8 @@ func TestPawnMove(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "h7 h6"
-	_, err := NewMove(board, turn, command)
-	if err != nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
 		t.Error("Pawn move not valid")
 	}
 }
@@ -355,8 +355,8 @@ func TestPawnMoveDouble(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "a7 a5"
-	_, err := NewMove(board, turn, command)
-	if err != nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
 		t.Error("Pawn move not valid")
 	}
 }
@@ -376,8 +376,8 @@ func TestPawnMoveInvalid(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "h7 h4"
-	_, err := NewMove(board, turn, command)
-	if err == nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if isValid {
 		t.Error("Pawn move is valid")
 	}
 }
@@ -397,8 +397,8 @@ func TestPawnMoveInvalidBackwards(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e5 e6"
-	_, err := NewMove(board, turn, command)
-	if err == nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if isValid {
 		t.Error("Pawn move is valid")
 	}
 }
@@ -418,8 +418,8 @@ func TestPawnMoveInvalidCapture(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e5 e4"
-	_, err := NewMove(board, turn, command)
-	if err == nil {
+	_, isValid, _ := NewMove(board, turn, command)
+	if isValid {
 		t.Error("Pawn move is valid")
 	}
 }
