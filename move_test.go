@@ -843,3 +843,27 @@ func TestMoveInvalidAsChecked(t *testing.T) {
 		t.Error("King move is valid when it should not have been (as checked)")
 	}
 }
+
+func TestMoveCheck(t *testing.T) {
+	board := Board{
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "○ G", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "● R", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "● G", "   ", "   ", "   "},
+	}
+
+	// create move
+	turn := BLACK
+	command := "f6 f2"
+	move, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
+		t.Error("invalid Rook check move")
+	}
+	if !IsInCheck(board, move, WHITE) {
+		t.Error("check move not identified")
+	}
+}
