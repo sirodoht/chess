@@ -406,6 +406,75 @@ func TestBishopMoveInvalidVertical(t *testing.T) {
 	}
 }
 
+func TestBishopCaptureTopLeft(t *testing.T) {
+	board := Board{
+		{"● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},
+		{"● P", "● P", "● P", "● P", "● P", "● P", "● P", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "● P", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "○ P", "   ", "○ P", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "● P"},
+		{"○ P", "○ P", "○ P", "○ P", "   ", "○ P", "   ", "○ P"},
+		{"○ R", "○ K", "○ B", "○ Q", "○ G", "○ B", "○ K", "○ R"},
+	}
+
+	// create move
+	turn := WHITE
+	command := "f8 b4"
+	move, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
+		t.Error("invalid Bishop capture move")
+	}
+	if move.strategy != CAPTURE {
+		t.Error("Bishop capture strategy was not identified")
+	}
+}
+
+func TestBishopCaptureBottomLeft(t *testing.T) {
+	board := Board{
+		{"● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},
+		{"   ", "● P", "● P", "● P", "● P", "● P", "● P", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "○ B", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"● P", "   ", "   ", "   ", "○ P", "   ", "○ P", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "● P"},
+		{"○ P", "○ P", "○ P", "○ P", "   ", "○ P", "   ", "○ P"},
+		{"○ R", "○ K", "○ B", "○ Q", "○ G", "   ", "○ K", "○ R"},
+	}
+
+	// create move
+	turn := WHITE
+	command := "b4 a5"
+	move, isValid, _ := NewMove(board, turn, command)
+	if !isValid {
+		t.Error("invalid Bishop capture move")
+	}
+	if move.strategy != CAPTURE {
+		t.Error("Bishop capture strategy was not identified")
+	}
+}
+
+func TestBishopCaptureBlocked(t *testing.T) {
+	board := Board{
+		{"● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},
+		{"   ", "● P", "● P", "● P", "   ", "● P", "● P", "   "},
+		{"   ", "   ", "● P", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "○ B", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"● P", "   ", "   ", "   ", "○ P", "   ", "○ P", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "● P"},
+		{"○ P", "○ P", "○ P", "○ P", "   ", "○ P", "   ", "○ P"},
+		{"○ R", "○ K", "○ B", "○ Q", "○ G", "   ", "○ K", "○ R"},
+	}
+
+	// create move
+	turn := WHITE
+	command := "b4 d2"
+	_, isValid, _ := NewMove(board, turn, command)
+	if isValid {
+		t.Error("invalid Bishop capture move")
+	}
+}
+
 func TestQueenMoveDiagonal(t *testing.T) {
 	board := Board{
 		{"● R", "● K", "● B", "● Q", "● G", "● B", "● K", "● R"},

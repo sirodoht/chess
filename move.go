@@ -476,13 +476,20 @@ func (m Move) IsBishopMoveValid(b Board) bool {
 				// path is not clear
 				break
 			}
-		}
-		if newRow == destinationLocation.row && newCol == destinationLocation.col {
-			// reached destination
-			if m.strategy == NORMAL {
+			if newRow == destinationLocation.row && newCol == destinationLocation.col {
+				// reached destination
 				return true
 			}
+		} else if m.strategy == CAPTURE {
+			if !b.ParseSquare(newRow, newCol).isEmpty {
+				// path is not clear, either found or break
+				if newCol == destinationLocation.col && newRow == destinationLocation.row {
+					return true
+				}
+				break
+			}
 		}
+
 		newRow = newRow - 1
 		newCol = newCol + 1
 	}
@@ -496,11 +503,17 @@ func (m Move) IsBishopMoveValid(b Board) bool {
 				// path is not clear
 				break
 			}
-		}
-		if newRow == destinationLocation.row && newCol == destinationLocation.col {
-			// reached destination
-			if m.strategy == NORMAL {
+			if newRow == destinationLocation.row && newCol == destinationLocation.col {
+				// reached destination
 				return true
+			}
+		} else if m.strategy == CAPTURE {
+			if !b.ParseSquare(newRow, newCol).isEmpty {
+				// path is not clear, either found or break
+				if newCol == destinationLocation.col && newRow == destinationLocation.row {
+					return true
+				}
+				break
 			}
 		}
 		newRow = newRow + 1
@@ -516,11 +529,17 @@ func (m Move) IsBishopMoveValid(b Board) bool {
 				// path is not clear
 				break
 			}
-		}
-		if newRow == destinationLocation.row && newCol == destinationLocation.col {
-			// reached destination
-			if m.strategy == NORMAL {
+			if newRow == destinationLocation.row && newCol == destinationLocation.col {
+				// reached destination
 				return true
+			}
+		} else if m.strategy == CAPTURE {
+			if !b.ParseSquare(newRow, newCol).isEmpty {
+				// path is not clear, either found or break
+				if newCol == destinationLocation.col && newRow == destinationLocation.row {
+					return true
+				}
+				break
 			}
 		}
 		newRow = newRow + 1
@@ -536,11 +555,17 @@ func (m Move) IsBishopMoveValid(b Board) bool {
 				// path is not clear
 				break
 			}
-		}
-		if newRow == destinationLocation.row && newCol == destinationLocation.col {
-			// reached destination
-			if m.strategy == NORMAL {
+			if newRow == destinationLocation.row && newCol == destinationLocation.col {
+				// reached destination
 				return true
+			}
+		} else if m.strategy == CAPTURE {
+			if !b.ParseSquare(newRow, newCol).isEmpty {
+				// path is not clear, either found or break
+				if newCol == destinationLocation.col && newRow == destinationLocation.row {
+					return true
+				}
+				break
 			}
 		}
 		newRow = newRow - 1
