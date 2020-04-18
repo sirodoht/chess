@@ -108,7 +108,7 @@ func NewMove(b Board, team Team, command string) (Move, bool, string) {
 		destinationSquare := b.GetSquare(m, AFTER)
 		capturedPieceName := GetPieceName(destinationSquare.piece, VERBOSE)
 		destinationTeamName := GetTeamName(m.GetEnemy(), SYMBOL)
-		msg = fmt.Sprintf("CAPTURE: %s %s captured %s %s at %s", originTeamName, capturedPieceName, destinationTeamName, originPieceName, destinationLocation)
+		msg = fmt.Sprintf("CAPTURE: %s %s captured %s %s at %s", originTeamName, originPieceName, destinationTeamName, capturedPieceName, destinationLocation)
 	}
 
 	return m, true, msg
