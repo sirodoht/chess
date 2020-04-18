@@ -306,7 +306,9 @@ func (m Move) IsValid(b Board, turn Team) string {
 
 // GetNotationFromLocation returns string of notation, given Location
 func GetNotationFromLocation(location Location) string {
-	notations := map[int]rune{
+	notationRow := location.row + 1
+
+	colNotations := map[int]rune{
 		0: 'a',
 		1: 'b',
 		2: 'c',
@@ -316,9 +318,9 @@ func GetNotationFromLocation(location Location) string {
 		6: 'g',
 		7: 'h',
 	}
-	notationRow := notations[location.row]
-	notationCol := location.col + 1
-	return string(notationRow) + strconv.Itoa(notationCol)
+	notationCol := colNotations[location.col]
+
+	return string(notationCol) + strconv.Itoa(notationRow)
 }
 
 // IsInvalidAsChecked returns true if current team King is threatened by enemy's piece
@@ -327,17 +329,24 @@ func GetNotationFromLocation(location Location) string {
 // if the move is valid. If so, then that means it's a capture move, which means
 // current team's King is in check position.
 func (m Move) IsInvalidAsChecked(b Board) bool {
-	kingLocation := b.FindKing(m.team)
+	var potentialBoard Board
+	potentialBoard.LoadData(b)
+	potentialBoard.Execute(m)
+
+	kingLocation := potentialBoard.FindKing(m.team)
 	kingLocationAsNotation := GetNotationFromLocation(kingLocation)
 	for i := 0; i < 8; i++ {
 		for j := 0; j < 8; j++ {
-			originEnemySquare := b.ParseSquare(i, j)
+			originEnemySquare := potentialBoard.ParseSquare(i, j)
 			if originEnemySquare.isEmpty {
 				continue
 			}
 			currentLocation := Location{
 				row: i,
 				col: j,
+			}
+			if currentLocation.row == kingLocation.row && currentLocation.col == kingLocation.col {
+				continue
 			}
 			currentLocationAsNotation := GetNotationFromLocation(currentLocation)
 			command := currentLocationAsNotation + " " + kingLocationAsNotation
