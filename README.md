@@ -48,6 +48,18 @@ $ go run .
 $ go test
 ```
 
+## Implementation
+
+* [x] Pieces moves validation
+* [x] Capturing validation
+* [ ] Check
+* [ ] Checkmate
+* [ ] Promotion
+* [ ] Castling
+* [ ] Stalemate
+* [ ] En passant
+
+
 ## License
 
 [MIT](LICENSE)
