@@ -54,7 +54,7 @@ func GetPieceName(piece Piece, format Format) string {
 			KING:   "King",
 		}
 		return verbosePieceNames[piece]
-	} else {
+	} else if format == UPPER {
 		upperPieceNames := map[Piece]string{
 			PAWN:   "PAWN",
 			ROOK:   "ROOK",
@@ -64,5 +64,15 @@ func GetPieceName(piece Piece, format Format) string {
 			KING:   "KING",
 		}
 		return upperPieceNames[piece]
+	} else {
+		lowerPieceNames := map[Piece]string{
+			PAWN:   "pawn",
+			ROOK:   "rook",
+			KNIGHT: "knight",
+			BISHOP: "bishop",
+			QUEEN:  "queen",
+			KING:   "king",
+		}
+		return lowerPieceNames[piece]
 	}
 }

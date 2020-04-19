@@ -9,6 +9,8 @@ const (
 	VERBOSE Format = iota
 	// SYMBOL is only the circle symbol, e.g. "○"
 	SYMBOL
-	// UPPER is as uppercase letters
+	// UPPER is as uppercase letters, e.g. "WHITE"
 	UPPER
+	// LOWER is as lowercase letters, e.g. "black"
+	LOWER
 )

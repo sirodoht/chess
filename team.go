@@ -26,11 +26,17 @@ func GetTeamName(team Team, format Format) string {
 			BLACK: "●",
 		}
 		return symbolNames[team]
-	} else {
+	} else if format == UPPER {
 		upperNames := map[Team]string{
 			WHITE: "WHITE",
 			BLACK: "BLACK",
 		}
 		return upperNames[team]
+	} else {
+		lowerNames := map[Team]string{
+			WHITE: "white",
+			BLACK: "black",
+		}
+		return lowerNames[team]
 	}
 }
