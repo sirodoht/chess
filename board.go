@@ -110,6 +110,7 @@ func (b *Board) Render() {
 		}
 	}
 	table.AppendBulk(data)
+	fmt.Println() // to breathe
 	table.Render()
 }
 

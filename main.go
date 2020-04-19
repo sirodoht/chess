@@ -12,11 +12,10 @@ func main() {
 	board := Board{}
 	board.Init()
 	turn := WHITE
+	board.Render()
 
 	// main game loop
 	for {
-		board.Render()
-
 		// read from stdin
 		reader := bufio.NewReader(os.Stdin)
 		turnName := GetTeamName(turn, UPPER)
@@ -44,22 +43,29 @@ func main() {
 		}
 
 		// create move
-		move, isValid, msg, isEndgame := NewMove(board, turn, command)
+		move, isValid, messages, isEndgame := NewMove(board, turn, command)
 
 		// check move validity
 		if !isValid {
-			fmt.Printf("\n%s\n", msg)
+			board.Render()
+			if len(messages) > 0 {
+				fmt.Printf("%s\n", messages[0])
+			}
 			continue
 		}
 
 		// execute move
 		board.Execute(move)
 
-		// show status message
-		fmt.Printf("\n%s\n", msg)
+		// render new board
+		board.Render()
+
+		// show status message, start from i=1
+		for i := 1; i < len(messages); i++ {
+			fmt.Printf("%s\n", messages[i])
+		}
 
 		if isEndgame {
-			board.Render()
 			break
 		}
 

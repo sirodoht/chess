@@ -52,7 +52,7 @@ const (
 // NewMove validates and returns a new Move struct out of a command string
 // Also returns whether Move was valid, a possible message for user, and whether is
 // final move.
-func NewMove(b Board, team Team, command string) (Move, bool, string, bool) {
+func NewMove(b Board, team Team, command string) (Move, bool, []string, bool) {
 	if len(command) == 4 {
 		command = string(command[0]) + string(command[1]) + " " + string(command[2]) + string(command[3])
 	}
@@ -60,7 +60,8 @@ func NewMove(b Board, team Team, command string) (Move, bool, string, bool) {
 	if !IsCommandValid(command) {
 		isValid := false
 		isEndgame := false
-		return Move{}, isValid, "MOVE: invalid; example: 'd7 d6'", isEndgame
+		messages := []string{"MOVE: invalid; example: 'd7 d6'"}
+		return Move{}, isValid, messages, isEndgame
 	}
 
 	// parse command
@@ -92,7 +93,8 @@ func NewMove(b Board, team Team, command string) (Move, bool, string, bool) {
 	if len(validityMessage) > 0 {
 		isValid := false
 		isEndgame := false
-		return Move{}, isValid, "MOVE: " + validityMessage, isEndgame
+		messages := []string{"MOVE: " + validityMessage}
+		return Move{}, isValid, messages, isEndgame
 	}
 
 	// build success message
@@ -114,13 +116,17 @@ func NewMove(b Board, team Team, command string) (Move, bool, string, bool) {
 	// check if move causes enemy to lose
 	checkmated := IsCheckmated(b, m, m.GetEnemy())
 
+	// handle check and checkmate messages
+	messages := []string{msg}
 	if checkmated {
-		msg += fmt.Sprintf("\nCHECKMATE: %s wins!", GetTeamName(m.team, LOWER))
+		checkmateMessage := fmt.Sprintf("CHECKMATE: %s wins!", GetTeamName(m.team, LOWER))
+		messages = append(messages, checkmateMessage)
 	} else if inCheck {
-		msg += fmt.Sprintf("\nCHECK: %s is in check", destinationTeamName)
+		checkMessage := fmt.Sprintf("CHECK: %s is in check", destinationTeamName)
+		messages = append(messages, checkMessage)
 	}
 
-	return m, true, msg, checkmated
+	return m, true, messages, checkmated
 }
 
 // GetLocation returns the Location struct of either BEFORE or AFTER parts
@@ -265,24 +271,24 @@ func GetStrategy(m Move, b Board) Strategy {
 func (m Move) IsValid(b Board, turn Team) string {
 	// handle same origin and destination
 	if m.GetLocation(BEFORE).row == m.GetLocation(AFTER).row && m.GetLocation(BEFORE).col == m.GetLocation(AFTER).col {
-		return "origin and destination are the same"
+		return "invalid; origin and destination are the same"
 	}
 
 	// handle empty square on origin
 	beforeSquare := b.GetSquare(m, BEFORE)
 	if beforeSquare.isEmpty {
-		return "empty origin"
+		return "invalid; empty origin"
 	}
 
 	// handle when player plays enemy's pieces
 	if beforeSquare.team != turn {
-		return "wrong turn"
+		return "invalid; wrong turn"
 	}
 
 	// handle when player's destination is same color
 	afterSquare := b.GetSquare(m, AFTER)
 	if afterSquare.team == turn {
-		return "destination is same color"
+		return "invalid; destination is same color"
 	}
 
 	originPiece := beforeSquare.piece
