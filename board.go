@@ -3,10 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"os"
-	"strconv"
-
-	"github.com/olekukonko/tablewriter"
 )
 
 // Board is our chess board state
@@ -23,6 +19,14 @@ func (b *Board) Init() {
 		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
 		{"○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P", "○ P"},
 		{"○ R", "○ K", "○ B", "○ Q", "○ G", "○ B", "○ K", "○ R"},
+		// {"   ", "   ", "   ", "   ", "● G", "   ", "   ", "   "},
+		// {"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		// {"   ", "   ", "   ", "   ", "○ G", "   ", "   ", "   "},
+		// {"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		// {"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		// {"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		// {"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		// {"   ", "   ", "   ", "   ", "   ", "   ", "○ R", "   "},
 	}
 }
 
@@ -81,37 +85,21 @@ func (b *Board) Execute(m Move) {
 
 // Render prints the board in stdout
 func (b *Board) Render() {
-	// init and print board
-	table := tablewriter.NewWriter(os.Stdout)
-
-	// add letter headers as tablewriter lib headers
-	header := []string{" ", "a", "b", "c", "d", "e", "f", "g", "h"}
-	table.SetAutoFormatHeaders(false)
-	table.SetHeader(header)
-
-	// transform to [][]string because that's what is required by tablewriter lib
-	data := [][]string{}
-	for i := 0; i < 8; i++ {
-		for j := 0; j < 9; j++ {
-			if len(data) >= i {
-				data = append(data, []string{})
-			}
-
-			dataCell := ""
-
-			// add row numbers on the left
-			if j == 0 {
-				dataCell = strconv.Itoa(i + 1)
-			} else {
-				dataCell = string(b[i][j-1])
-			}
-
-			data[i] = append(data[i], dataCell)
-		}
-	}
-	table.AppendBulk(data)
 	fmt.Println() // to breathe
-	table.Render()
+	fmt.Println("   |  a  |  b  |  c  |  d  |  e  |  f  |  g  |  h  |")
+	fmt.Println(" - +-----+-----+-----+-----+-----+-----+-----+-----+")
+
+	for i := 0; i < 8; i++ {
+		fmt.Printf(" %d |", i)
+		for j := 0; j < 8; j++ {
+			cell := b[i][j]
+			fmt.Printf(" %s |", cell)
+		}
+		fmt.Println()
+	}
+
+	fmt.Println(" - +-----+-----+-----+-----+-----+-----+-----+-----+")
+	fmt.Println() // breathe again
 }
 
 // GetSquare returns the part piece that is to be moved, either BEFORE or AFTER
