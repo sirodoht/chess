@@ -53,7 +53,8 @@ $ go test
 * [x] Pieces movement
 * [x] Capturing
 * [X] Check
-* [ ] Checkmate
+* [X] Checkmate
+* [X] Resignation
 * [ ] Promotion
 * [ ] Castling
 * [ ] Stalemate
