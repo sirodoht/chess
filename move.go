@@ -24,7 +24,6 @@ type Part int
 const (
 	// BEFORE is about the part of the move that defines where the piece comes from
 	BEFORE Part = iota
-
 	// AFTER is about the part of the move that defines where the piece goes to
 	AFTER
 )
@@ -36,35 +35,32 @@ type Strategy int
 const (
 	// NORMAL is when player moves piece to an empty square
 	NORMAL Strategy = iota
-
 	// CAPTURE is when player moves piece to capture enemy piece
 	CAPTURE
-
 	// CASTLING is when player executes a castling between King and Rook
 	CASTLING
-
 	// ENPASSANT is when player captures enemy pawn in passing
 	ENPASSANT
-
 	// PROMOTION is when pawn reaches eighth square and is promoted
 	PROMOTION
-
 	// CHECKMATE is when player checkmates enemy
 	CHECKMATE
-
 	// STALEMATE is when non-checked player has no legal move to make
 	STALEMATE
 )
 
 // NewMove validates and returns a new Move struct out of a command string
-// Also returns whether Move was valid, and a possible message for user.
-func NewMove(b Board, team Team, command string) (Move, bool, string) {
+// Also returns whether Move was valid, a possible message for user, and whether is
+// final move.
+func NewMove(b Board, team Team, command string) (Move, bool, string, bool) {
 	if len(command) == 4 {
 		command = string(command[0]) + string(command[1]) + " " + string(command[2]) + string(command[3])
 	}
 
 	if !IsCommandValid(command) {
-		return Move{}, false, "MOVE: invalid; example: 'd7 d6'"
+		isValid := false
+		isEndgame := false
+		return Move{}, isValid, "MOVE: invalid; example: 'd7 d6'", isEndgame
 	}
 
 	// parse command
@@ -94,7 +90,9 @@ func NewMove(b Board, team Team, command string) (Move, bool, string) {
 	// check move validity
 	validityMessage := m.IsValid(b, team)
 	if len(validityMessage) > 0 {
-		return Move{}, false, "MOVE: " + validityMessage
+		isValid := false
+		isEndgame := false
+		return Move{}, isValid, "MOVE: " + validityMessage, isEndgame
 	}
 
 	// build success message
@@ -110,11 +108,19 @@ func NewMove(b Board, team Team, command string) (Move, bool, string) {
 		msg = fmt.Sprintf("CAPTURE: %s %s captured %s %s at %s", originTeamName, originPieceName, destinationTeamName, capturedPieceName, destinationLocation)
 	}
 
-	if IsInCheck(b, m, m.GetEnemy()) {
+	// check if move causes enemy to be in check
+	inCheck := IsInCheck(b, m, m.GetEnemy())
+
+	// check if move causes enemy to lose
+	checkmated := IsCheckmated(b, m, m.GetEnemy())
+
+	if checkmated {
+		msg += fmt.Sprintf("\nCHECKMATE: %s wins!", GetTeamName(m.team, LOWER))
+	} else if inCheck {
 		msg += fmt.Sprintf("\nCHECK: %s is in check", destinationTeamName)
 	}
 
-	return m, true, msg
+	return m, true, msg, checkmated
 }
 
 // GetLocation returns the Location struct of either BEFORE or AFTER parts
@@ -299,10 +305,8 @@ func (m Move) IsValid(b Board, turn Team) string {
 		return "invalid move"
 	}
 
-	// check if ally player is in check
-	fmt.Printf("team making the move: %s\n", GetTeamName(m.team, VERBOSE))
+	// check if player playing now is in check
 	if IsInCheck(b, m, m.team) {
-		// if m.IsInvalidAsChecked(b) {
 		return "invalid as checked"
 	}
 
@@ -419,6 +423,83 @@ func IsInCheck(b Board, m Move, possiblyCheckedTeam Team) bool {
 	}
 
 	return false
+}
+
+// IsCheckmated returns true if given team loses
+// It works by finding given team's King and checking if it has any valid moves
+func IsCheckmated(b Board, m Move, possiblyCheckmatedTeam Team) bool {
+	// create new board and apply current move
+	var newBoard Board
+	newBoard.LoadData(b)
+	newBoard.Execute(m)
+
+	// find all possible destination locations for possibly checkmated King
+	possiblyCheckmatedKingLocation := newBoard.FindKing(possiblyCheckmatedTeam)
+	kingDestinations := []Location{
+		// clockwise
+		{row: possiblyCheckmatedKingLocation.row - 1, col: possiblyCheckmatedKingLocation.col},
+		{row: possiblyCheckmatedKingLocation.row - 1, col: possiblyCheckmatedKingLocation.col + 1},
+		{row: possiblyCheckmatedKingLocation.row, col: possiblyCheckmatedKingLocation.col + 1},
+		{row: possiblyCheckmatedKingLocation.row + 1, col: possiblyCheckmatedKingLocation.col + 1},
+		{row: possiblyCheckmatedKingLocation.row + 1, col: possiblyCheckmatedKingLocation.col},
+		{row: possiblyCheckmatedKingLocation.row + 1, col: possiblyCheckmatedKingLocation.col - 1},
+		{row: possiblyCheckmatedKingLocation.row, col: possiblyCheckmatedKingLocation.col - 1},
+		{row: possiblyCheckmatedKingLocation.row - 1, col: possiblyCheckmatedKingLocation.col - 1},
+	}
+
+	// check if move with origin the King and destination each possible King destination
+	// is valid, if no valid are found, then King has been checkmated
+	foundValid := false
+	for _, currentLocation := range kingDestinations {
+		if !IsLocationValid(currentLocation.row, currentLocation.col) {
+			continue
+		}
+
+		possiblyCheckmatedKingLocationAsNotation := GetNotationFromLocation(possiblyCheckmatedKingLocation)
+		currentLocationAsNotation := GetNotationFromLocation(currentLocation)
+		command := possiblyCheckmatedKingLocationAsNotation + " " + currentLocationAsNotation
+
+		// parse command
+		words := strings.Fields(command)
+		before := words[0]
+		after := words[1]
+
+		// build move to test if it is a check move
+		testKingMove := Move{}
+		testKingMove.team = possiblyCheckmatedTeam
+		testKingMove.beforeLetter = []rune(before)[0]
+		testKingMove.afterLetter = []rune(after)[0]
+		beforeNumber, err := strconv.Atoi(string([]rune(before)[1]))
+		if err != nil {
+			panic(err)
+		}
+		testKingMove.beforeNumber = beforeNumber
+		afterNumber, err := strconv.Atoi(string([]rune(after)[1]))
+		if err != nil {
+			panic(err)
+		}
+		testKingMove.afterNumber = afterNumber
+		testKingMove.strategy = GetStrategy(m, newBoard)
+
+		// validate move
+		isMoveValid := testKingMove.IsKingMoveValid(newBoard)
+		if isMoveValid {
+			// validate move for check status too
+			// if in check, then move not valid
+			isMoveValid = !IsInCheck(newBoard, testKingMove, testKingMove.team)
+		}
+
+		// if valid move found, then King not checkmated
+		if isMoveValid {
+			foundValid = true
+			break
+		}
+	}
+
+	// return not foundValid because
+	// if valid Move is found, means King is not checkmated (thus return false)
+	// if no valid Move is found, means King is checkmated (thus return true)
+	return !foundValid
 }
 
 // IsRookMoveValid returns whether given move, with Rook as origin piece, is valid

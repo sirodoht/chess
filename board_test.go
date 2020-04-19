@@ -11,7 +11,7 @@ func TestBoardPawn(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e7 e5"
-	move, _, _ := NewMove(board, turn, command)
+	move, _, _, _ := NewMove(board, turn, command)
 
 	// execute move
 	board.Execute(move)

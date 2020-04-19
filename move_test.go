@@ -19,7 +19,7 @@ func TestRookMove(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "h8 h6"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("Rook move not valid")
 	}
@@ -40,7 +40,7 @@ func TestRookMoveInvalid(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "h8 h4"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("Rook move is valid")
 	}
@@ -61,7 +61,7 @@ func TestRookMoveInvalidDiagonal(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "h7 g6"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("Rook move is valid")
 	}
@@ -82,7 +82,7 @@ func TestRookCaptureTop(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "h8 h2"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid Rook capture move")
 	}
@@ -106,7 +106,7 @@ func TestRookCaptureLeft(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "h3 a3"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid Rook capture move")
 	}
@@ -130,7 +130,7 @@ func TestRookCaptureBottom(t *testing.T) {
 	// create move
 	turn := BLACK
 	command := "a1 a7"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid Rook capture move")
 	}
@@ -154,7 +154,7 @@ func TestRookCaptureRight(t *testing.T) {
 	// create move
 	turn := BLACK
 	command := "a4 g4"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid Rook capture move")
 	}
@@ -178,7 +178,7 @@ func TestRookCaptureBlocked(t *testing.T) {
 	// create move
 	turn := BLACK
 	command := "h1 h8"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("Rook capture move is valid when it should not have been")
 	}
@@ -199,7 +199,7 @@ func TestKnightMove(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "g8 h6"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("Knight move not valid")
 	}
@@ -220,7 +220,7 @@ func TestKnightMoveInvalid(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "g8 h5"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("Knight move is valid")
 	}
@@ -241,7 +241,7 @@ func TestKnightCaptureTopRight(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "f6 g4"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid Knight capture move")
 	}
@@ -265,7 +265,7 @@ func TestKnightCaptureTopLeft(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "f6 e4"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid Knight capture move")
 	}
@@ -289,7 +289,7 @@ func TestKnightCaptureLeftTop(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "f6 d5"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid Knight capture move")
 	}
@@ -313,7 +313,7 @@ func TestKnightCaptureBottomLeft(t *testing.T) {
 	// create move
 	turn := BLACK
 	command := "g1 f3"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid Knight capture move")
 	}
@@ -337,7 +337,7 @@ func TestKnightCaptureInvalid(t *testing.T) {
 	// create move
 	turn := BLACK
 	command := "g1 f3"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("Knight capture move is valid when it should not have")
 	}
@@ -358,7 +358,7 @@ func TestBishopMove(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "f8 d6"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("Bishop move not valid")
 	}
@@ -379,7 +379,7 @@ func TestBishopMoveInvalid(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "f8 d6"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("Bishop move is valid")
 	}
@@ -400,7 +400,7 @@ func TestBishopMoveInvalidVertical(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "f8 f6"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("Bishop move is valid")
 	}
@@ -421,7 +421,7 @@ func TestBishopCaptureTopLeft(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "f8 b4"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid Bishop capture move")
 	}
@@ -445,7 +445,7 @@ func TestBishopCaptureBottomLeft(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "b4 a5"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid Bishop capture move")
 	}
@@ -469,7 +469,7 @@ func TestBishopCaptureBlocked(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "b4 d2"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("invalid Bishop capture move")
 	}
@@ -490,7 +490,7 @@ func TestQueenMoveDiagonal(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "d8 h4"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("Queen move not valid")
 	}
@@ -511,7 +511,7 @@ func TestQueenMoveVertical(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "d8 d6"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("Queen move not valid")
 	}
@@ -532,7 +532,7 @@ func TestQueenMoveInvalid(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "f8 f6"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("Queen move is valid")
 	}
@@ -553,7 +553,7 @@ func TestQueenCaptureDiagonal(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "d8 h4"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid Queen capture move")
 	}
@@ -577,7 +577,7 @@ func TestKingMoveVertical(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e8 e7"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("King move not valid")
 	}
@@ -598,7 +598,7 @@ func TestKingMoveDiagonal(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e7 d6"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("King move not valid")
 	}
@@ -619,7 +619,7 @@ func TestKingMoveInvalidVertical(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e8 e6"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("King move is valid")
 	}
@@ -640,7 +640,7 @@ func TestKingMoveInvalidDiagonal(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e7 c5"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("King move is valid")
 	}
@@ -661,7 +661,7 @@ func TestKingCaptureVertical(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e7 e6"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid King capture move")
 	}
@@ -685,7 +685,7 @@ func TestPawnMove(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "h7 h6"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("Pawn move not valid")
 	}
@@ -706,7 +706,7 @@ func TestPawnMoveDouble(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "a7 a5"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("Pawn move not valid")
 	}
@@ -727,7 +727,7 @@ func TestPawnMoveInvalid(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "h7 h4"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("Pawn move is valid")
 	}
@@ -748,7 +748,7 @@ func TestPawnMoveInvalidBackwards(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e5 e6"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("Pawn move is valid")
 	}
@@ -769,7 +769,7 @@ func TestPawnMoveInvalidCapture(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e5 e4"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("Pawn move is valid")
 	}
@@ -790,7 +790,7 @@ func TestPawnCaptureAsWhite(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "d5 e4"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid Pawn capture move")
 	}
@@ -814,7 +814,7 @@ func TestPawnCaptureAsBlack(t *testing.T) {
 	// create move
 	turn := BLACK
 	command := "h4 g5"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid Pawn capture move")
 	}
@@ -838,7 +838,7 @@ func TestMoveInvalidAsChecked(t *testing.T) {
 	// create move
 	turn := WHITE
 	command := "e2 f2"
-	_, isValid, _ := NewMove(board, turn, command)
+	_, isValid, _, _ := NewMove(board, turn, command)
 	if isValid {
 		t.Error("King move is valid when it should not have been (as checked)")
 	}
@@ -859,11 +859,38 @@ func TestMoveCheck(t *testing.T) {
 	// create move
 	turn := BLACK
 	command := "f6 f2"
-	move, isValid, _ := NewMove(board, turn, command)
+	move, isValid, _, _ := NewMove(board, turn, command)
 	if !isValid {
 		t.Error("invalid Rook check move")
 	}
 	if !IsInCheck(board, move, WHITE) {
 		t.Error("check move not identified")
+	}
+}
+
+func TestMoveCheckmate(t *testing.T) {
+	board := Board{
+		{"   ", "   ", "   ", "   ", "○ G", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "● G", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   "},
+		{"   ", "   ", "   ", "   ", "   ", "   ", "● R", "   "},
+	}
+
+	// create move
+	turn := BLACK
+	command := "g8 g1"
+	move, isValid, _, isEndgame := NewMove(board, turn, command)
+	if !isValid {
+		t.Error("invalid Rook checkmate move")
+	}
+	if !IsCheckmated(board, move, WHITE) {
+		t.Error("checkmate move not identified")
+	}
+	if !isEndgame {
+		t.Error("endgame move not identified")
 	}
 }
