@@ -20,15 +20,33 @@ func main() {
 		// read from stdin
 		reader := bufio.NewReader(os.Stdin)
 		turnName := GetTeamName(turn, UPPER)
-		fmt.Printf("%s plays. Enter next move: ", turnName)
+		fmt.Printf("%s plays. Enter next %s move: ", turnName, GetTeamName(turn, SYMBOL))
 		command, err := reader.ReadString('\n')
 		if err != nil {
 			panic(err)
 		}
 		command = strings.TrimSpace(command)
 
+		// check for exit
+		if command == "exit" || command == "quit" {
+			fmt.Println("Goodbye!")
+			break
+		}
+
+		// check for resignation
+		if command == "resigns" {
+			winner := WHITE
+			if turn == WHITE {
+				winner = BLACK
+			}
+			fmt.Printf("RESIGNATION: %s wins!\n", GetTeamName(winner, LOWER))
+			break
+		}
+
 		// create move
-		move, isValid, msg := NewMove(board, turn, command)
+		move, isValid, msg, isEndgame := NewMove(board, turn, command)
+
+		// check move validity
 		if !isValid {
 			fmt.Printf("\n%s\n", msg)
 			continue
@@ -40,8 +58,8 @@ func main() {
 		// show status message
 		fmt.Printf("\n%s\n", msg)
 
-		// check for exit
-		if command == "exit" {
+		if isEndgame {
+			board.Render()
 			break
 		}
 
