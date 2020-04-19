@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"strconv"
 
@@ -64,7 +65,17 @@ func (b *Board) Execute(m Move) {
 	oldLocation := m.GetLocation(BEFORE)
 	newLocation := m.GetLocation(AFTER)
 	square := b.GetSquare(m, BEFORE)
+
+	if !IsLocationValid(newLocation.row, newLocation.col) {
+		errorMsg := fmt.Sprintf("move destination location (%d:%d) is invalid", newLocation.row, newLocation.col)
+		panic(errorMsg)
+	}
 	b[newLocation.row][newLocation.col] = GetTeamName(m.team, SYMBOL) + " " + GetPieceName(square.piece, SYMBOL)
+
+	if !IsLocationValid(oldLocation.row, oldLocation.col) {
+		errorMsg := fmt.Sprintf("move origin location (%d:%d) is invalid", oldLocation.row, oldLocation.col)
+		panic(errorMsg)
+	}
 	b[oldLocation.row][oldLocation.col] = "   "
 }
 
